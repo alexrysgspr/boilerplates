@@ -26,7 +26,7 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
         {
             Cursor = 0,
             FilterAlertOnly = true,
-            PageSize = 1000
+            PageSize = 10000
         };
 
         var isLastPage = false;

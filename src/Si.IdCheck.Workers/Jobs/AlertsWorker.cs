@@ -18,17 +18,23 @@ public class AlertsWorker : CronJobWorker
         _serviceScopeFactory = serviceScopeFactory;
     }
 
+    private bool isRunning;
+
+
     public override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
         try
         {
+            if (isRunning)
+                return;
+
             using var scope = _serviceScopeFactory.CreateScope();
             var mediator = scope.ServiceProvider.GetService<IMediator>();
 
             var getAssociationsRequest = new GetAssociations();
+            isRunning = true;
 
             var associations = await mediator.Send(getAssociationsRequest, cancellationToken);
-            
             foreach (var association in associations.Value)
             {
                 var associationRequest = new GetAssociation
@@ -61,6 +67,7 @@ public class AlertsWorker : CronJobWorker
         }
         catch (Exception e)
         {
+            isRunning = false;
             Logger.Error(e, "An error occurred while running AlertsWorker");
         }
     }
