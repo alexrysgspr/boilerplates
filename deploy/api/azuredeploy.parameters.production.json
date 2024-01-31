@@ -1,0 +1,48 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ASPNETCORE_ENVIRONMENT": {
+      "value": "Production"
+    },
+    "appServicePlanName": {
+      "value": "si-p-service-apps-sp-l"
+    },
+    "appServicePlanResourceGroupName": {
+      "value": "si-p-web-apps-rg"
+    },
+    "actionGroupName": {
+      "value": "si-p-web-apps-ag"
+    },
+    "webAppName": {
+      "value": "si-p-activity-logs-api-wa"
+    },
+    "keyVaultName": {
+      "value": "si-p-activities-api-kv"
+    },
+    "authUrl": {
+      "value": "https://auth.swiftid-cloud.com.au/"
+    },
+    "customDomainName": {
+      "value": "activity-logs-api.swiftid.com.au"
+    },
+    "appInsightsName": {
+      "value": "si-p-activity-logs-api-ai"
+    },
+    "pingTestName": {
+      "value": "si-p-activity-logs-api-ping-test"
+    },
+    "appStatusTestName": {
+      "value": "si-p-activity-logs-api-appstatus-test"
+    },
+    "appStatusTestMetricsAlertName": {
+      "value": "si-p-activity-logs-api-appstatus-test-ma"
+    },
+    "storageAccountName": {
+      "value": "sipactivitylogssa"
+    },
+    "workSpaceName": {
+      "value": "si-p-la-ws"
+    }
+  }
+}

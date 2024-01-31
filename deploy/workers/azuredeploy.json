@@ -1,0 +1,386 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ASPNETCORE_ENVIRONMENT": {
+      "type": "string"
+    },
+    "appServicePlanName": {
+      "type": "string"
+    },
+    "appServicePlanResourceGroupName": {
+      "type": "string"
+    },
+    "actionGroupName": {
+      "type": "string"
+    },
+    "webAppName": {
+      "type": "string"
+    },
+    "webApplinuxFxVersion": {
+      "type": "string",
+      "defaultValue": "DOTNETCORE|8.0"
+    },
+    "keyVaultName": {
+      "type": "string"
+    },
+    "authUrl": {
+      "type": "string"
+    },
+    "appInsightsName": {
+      "type": "string"
+    },
+    "pingTestName": {
+      "type": "string"
+    },
+    "appStatusTestName": {
+      "type": "string"
+    },
+    "appStatusTestMetricsAlertName": {
+      "type": "string"
+    },
+    "customDomainName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "workSpaceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "dbAdminLogin": "[concat('l', uniqueString(resourceGroup().id))]",
+    "dbAdminPassword": "[concat('P', uniqueString(resourceGroup().id), 'x', '!')]",
+    "costcentreTag": "si-activity-logging",
+    "appStatusAccessKey": "cXRgHt2fv5hdwUEq",
+    "adminAdGroup": "41d21fbb-fb39-4e06-a55b-193ffc1a61c1"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "[parameters('keyVaultName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]",
+        "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]"
+      ],
+      "apiVersion": "2015-06-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "environment": "[parameters('ASPNETCORE_ENVIRONMENT')]",
+        "costcentre": "[variables('costcentreTag')]"
+      },
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "sku": {
+          "name": "Standard",
+          "family": "A"
+        },
+        "enabledForDeployment": true,
+        "enabledForTemplateDeployment": true,
+        "enabledForVolumeEncryption": true,
+        "accessPolicies": [
+          {
+            "objectId": "[variables('adminAdGroup')]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "keys": [
+                "all"
+              ],
+              "secrets": [
+                "all"
+              ],
+              "certificates": [
+                "all"
+              ]
+            }
+          },
+          {
+            "objectId": "[reference(concat('Microsoft.Web/Sites/', parameters('webAppName')), '2018-02-01', 'Full').identity.principalId]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "keys": [
+                "get",
+                "list",
+                "unwrapkey",
+                "wrapkey",
+                "verify"
+              ],
+              "secrets": [
+                "get",
+                "list"
+              ],
+              "certificates": [
+                "get",
+                "list"
+              ]
+            }
+          },
+          {
+            "objectId": "[reference(concat('Microsoft.Web/Sites/', parameters('webAppName'), '/Slots/Staging'), '2018-02-01', 'Full').identity.principalId]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "keys": [
+                "get",
+                "list",
+                "unwrapkey",
+                "wrapkey",
+                "verify"
+              ],
+              "secrets": [
+                "get",
+                "list"
+              ],
+              "certificates": [
+                "get",
+                "list"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('storageAccountName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[resourceGroup().location]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "properties": {
+        "accessTier": "Hot"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[parameters('webAppName')]",
+      "kind": "api",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "tags": {
+        "environment": "[parameters('ASPNETCORE_ENVIRONMENT')]",
+        "costcentre": "[variables('costcentreTag')]"
+      },
+      "properties": {
+        "clientAffinityEnabled": false,
+        "siteConfig": {
+          "use32BitWorkerProcess": true,
+          "alwaysOn": false,
+          "clientAffinityEnabled": false,
+          "linuxFxVersion": "[parameters('webApplinuxFxVersion')]",
+          "minTlsVersion": "1.2",
+          "ftpsState": "FtpsOnly"
+        },
+        "serverFarmId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', parameters('appServicePlanResourceGroupName'), '/providers/Microsoft.Web/serverfarms/', parameters('appServicePlanName'))]",
+        "httpsOnly": true
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "slotconfignames",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]",
+            "[resourceId('microsoft.insights/components', parameters('appInsightsName'))]"
+          ],
+          "properties": {
+            "appSettingNames": [
+            ]
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "Staging",
+          "type": "slots",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]"
+          ],
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "tags": {
+            "environment": "[parameters('ASPNETCORE_ENVIRONMENT')]",
+            "costcentre": "[variables('costcentreTag')]"
+          },
+          "properties": {
+
+          },
+          "resources": [
+            {
+              "apiVersion": "2015-08-01",
+              "name": "connectionstrings",
+              "type": "config",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]"
+              ],
+              "properties": {
+                "SiActivityTrackingStorageAccount": {
+                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+                  "type": "Custom"
+                }
+              }
+            },
+            {
+              "apiVersion": "2015-08-01",
+              "name": "appsettings",
+              "type": "config",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]",
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+              ],
+              "properties": {
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+                "ApplicationInsights__InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+                "ASPNETCORE_ENVIRONMENT": "[parameters('ASPNETCORE_ENVIRONMENT')]",
+                "IdentitySettings__BaseUrl": "[parameters('authUrl')]",
+                "AppSettings__KeyVaultUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).VaultUri]",
+                "AppSettings__Environment": "[parameters('ASPNETCORE_ENVIRONMENT')]",
+                "LogSettings__LogEventLevel": "Information",
+                "Serilog__MinimumLevel__Default": "Information",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName')), '2015-05-01').ConnectionString]"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "[parameters('appInsightsName')]",
+      "type": "microsoft.insights/components",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "environment": "[parameters('ASPNETCORE_ENVIRONMENT')]",
+        "costcentre": "[variables('costcentreTag')]"
+      },
+      "apiVersion": "2020-02-02-preview",
+      "properties": {
+        "ApplicationId": "[parameters('webAppName')]",
+        "Application_Type": "web",
+        "Flow_Type": "Bluefield",
+        "Request_Source": "rest",
+        "WorkspaceResourceId": "[resourceId(parameters('appServicePlanResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('workSpaceName'))]"
+      }
+    },
+    {
+      "type": "microsoft.insights/webtests",
+      "name": "[parameters('appStatusTestName')]",
+      "apiVersion": "2015-05-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-link:', resourceId('microsoft.insights/components/', parameters('appInsightsName')))]": "Resource"
+      },
+      "dependsOn": [
+        "[concat('microsoft.insights/components/', parameters('appInsightsName'))]"
+      ],
+      "properties": {
+        "Name": "[parameters('appStatusTestName')]",
+        "Description": "App Status Test",
+        "Enabled": true,
+        "Frequency": "300",
+        "Timeout": "30",
+        "Kind": "ping",
+        "Locations": [
+          {
+            "Id": "us-ca-sjc-azr"
+          },
+          {
+            "Id": "apac-sg-sin-azr"
+          },
+          {
+            "Id": "apac-hk-hkn-azr"
+          },
+          {
+            "Id": "emea-au-syd-edge"
+          }
+        ],
+        "Configuration": {
+          "WebTest": "[concat('<WebTest Name=\"', parameters('appStatusTestName'), '\"',  ' Id=\"', guid(resourceGroup().id) ,'\"    Enabled=\"True\" CssProjectStructure=\"\" CssIteration=\"\" Timeout=\"30\" WorkItemIds=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" Description=\"\" CredentialUserName=\"\" CredentialPassword=\"\" PreAuthenticate=\"True\" Proxy=\"default\" StopOnError=\"False\" RecordedResultFile=\"\" ResultsLocale=\"\">        <Items>        <Request Method=\"GET\" Guid=\"a5f10126-e4cd-570d-961c-cea43999a200\" Version=\"1.1\" Url=\"', concat('https://', parameters('customDomainName'), '/_appstatus/', variables('appStatusAccessKey')),'\" ThinkTime=\"0\" Timeout=\"300\" ParseDependentRequests=\"True\" FollowRedirects=\"True\" RecordResult=\"True\" Cache=\"False\" ResponseTimeGoal=\"0\" Encoding=\"utf-8\" ExpectedHttpStatusCode=\"200\" ExpectedResponseUrl=\"\" ReportingName=\"\" IgnoreHttpStatusCode=\"False\" /></Items></WebTest>')]"
+        },
+        "SyntheticMonitorId": "[parameters('appStatusTestName')]"
+      }
+    },
+    {
+      "type": "microsoft.insights/webtests",
+      "name": "[parameters('pingTestName')]",
+      "apiVersion": "2015-05-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-link:', resourceId('microsoft.insights/components/', parameters('appInsightsName')))]": "Resource"
+      },
+      "dependsOn": [
+        "[concat('microsoft.insights/components/', parameters('appInsightsName'))]"
+      ],
+      "properties": {
+        "Name": "[parameters('pingTestName')]",
+        "Description": "Ping Test",
+        "Enabled": true,
+        "Frequency": "300",
+        "Timeout": "30",
+        "Kind": "ping",
+        "Locations": [
+          {
+            "Id": "us-ca-sjc-azr"
+          },
+          {
+            "Id": "apac-sg-sin-azr"
+          },
+          {
+            "Id": "apac-hk-hkn-azr"
+          },
+          {
+            "Id": "emea-au-syd-edge"
+          }
+        ],
+        "Configuration": {
+          "WebTest": "[concat('<WebTest Name=\"', parameters('pingTestName'), '\"',  ' Id=\"', guid(resourceGroup().id) ,'\"    Enabled=\"True\" CssProjectStructure=\"\" CssIteration=\"\" Timeout=\"30\" WorkItemIds=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" Description=\"\" CredentialUserName=\"\" CredentialPassword=\"\" PreAuthenticate=\"True\" Proxy=\"default\" StopOnError=\"False\" RecordedResultFile=\"\" ResultsLocale=\"\">        <Items>        <Request Method=\"GET\" Guid=\"a5f10126-e4cd-570d-961c-cea43999a200\" Version=\"1.1\" Url=\"', concat('https://', parameters('customDomainName'), '/_ping'),'\" ThinkTime=\"0\" Timeout=\"300\" ParseDependentRequests=\"True\" FollowRedirects=\"True\" RecordResult=\"True\" Cache=\"False\" ResponseTimeGoal=\"0\" Encoding=\"utf-8\" ExpectedHttpStatusCode=\"200\" ExpectedResponseUrl=\"\" ReportingName=\"\" IgnoreHttpStatusCode=\"False\" /></Items></WebTest>')]"
+        },
+        "SyntheticMonitorId": "[parameters('pingTestName')]"
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "name": "[parameters('appStatusTestMetricsAlertName')]",
+      "apiVersion": "2018-03-01",
+      "location": "global",
+      "tags": {
+        "[concat('hidden-link:',resourceId('microsoft.insights/components/', parameters('appInsightsName')))]": "Resource",
+        "[concat('hidden-link:', resourceId('microsoft.insights/webtests/',parameters('appStatusTestName')))]": "Resource"
+      },
+      "dependsOn": [
+        "[resourceId('microsoft.insights/webtests', parameters('appStatusTestName'))]",
+        "[resourceId('microsoft.insights/components', parameters('appInsightsName'))]"
+      ],
+      "properties": {
+        "description": "[concat('Automatically created alert rule for availability test for ',parameters('appStatusTestName'))]",
+        "severity": 1,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('microsoft.insights/webtests',parameters('appStatusTestName'))]",
+          "[resourceId('microsoft.insights/components',parameters('appInsightsName'))]"
+        ],
+        "evaluationFrequency": "PT1M",
+        "windowSize": "PT5M",
+        "templateType": 0,
+        "criteria": {
+          "webTestId": "[resourceId('microsoft.insights/webtests/', parameters('appStatusTestName'))]",
+          "componentId": "[resourceId('microsoft.insights/components/',parameters('appInsightsName'))]",
+          "failedLocationCount": 1,
+          "odata.type": "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', parameters('appServicePlanResourceGroupName'), '/providers/Microsoft.Insights/ActionGroups/', parameters('actionGroupName'))]"
+          }
+        ]
+      }
+    }
+  ]
+}

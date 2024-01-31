@@ -1,0 +1,81 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Api", "Si.IdCheck.Api\Si.IdCheck.Api.csproj", "{B4E8BE8F-BF22-4608-9088-4A35E1D066F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{892E8630-99BE-4F38-862A-967B259B75EB}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\azure-pipelines.yml = ..\build\azure-pipelines.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{EE686AE6-0D37-41D7-BE4B-98386422B8AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Workers", "Si.IdCheck.Workers\Si.IdCheck.Workers.csproj", "{814925EC-F485-4701-8316-FEE7B7AC414C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{BFE1546A-5F32-41F8-BB7E-FEDA932467EE}"
+	ProjectSection(SolutionItems) = preProject
+		..\deploy\api\azuredeploy.json = ..\deploy\api\azuredeploy.json
+		..\deploy\api\azuredeploy.parameters.production.json = ..\deploy\api\azuredeploy.parameters.production.json
+		..\deploy\api\azuredeploy.parameters.staging.json = ..\deploy\api\azuredeploy.parameters.staging.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workers", "Workers", "{5A1C33ED-A3F7-47C4-A3F5-2D2B9975E128}"
+	ProjectSection(SolutionItems) = preProject
+		..\deploy\workers\azuredeploy.json = ..\deploy\workers\azuredeploy.json
+		..\deploy\workers\azuredeploy.parameters.production.json = ..\deploy\workers\azuredeploy.parameters.production.json
+		..\deploy\workers\azuredeploy.parameters.staging.json = ..\deploy\workers\azuredeploy.parameters.staging.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{7797B848-79A9-44DE-A6B9-D678AF958C4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Integration.Tests", "Si.IdCheck.Integration.Tests\Si.IdCheck.Integration.Tests.csproj", "{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C754F17E-AE29-46AF-9832-B90664AC3B03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.Verifidentity", "Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Verifidentity.csproj", "{B96CE83B-FE8C-478D-BC19-585AE15B7128}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Si.Onboarding.ServiceBus", "Si.Onboarding.ServiceBus\Si.Onboarding.ServiceBus.csproj", "{040E6214-9EFE-40D1-94E1-57383DD66BEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4E8BE8F-BF22-4608-9088-4A35E1D066F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4E8BE8F-BF22-4608-9088-4A35E1D066F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4E8BE8F-BF22-4608-9088-4A35E1D066F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4E8BE8F-BF22-4608-9088-4A35E1D066F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{814925EC-F485-4701-8316-FEE7B7AC414C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{814925EC-F485-4701-8316-FEE7B7AC414C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{814925EC-F485-4701-8316-FEE7B7AC414C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{814925EC-F485-4701-8316-FEE7B7AC414C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{040E6214-9EFE-40D1-94E1-57383DD66BEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{040E6214-9EFE-40D1-94E1-57383DD66BEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{040E6214-9EFE-40D1-94E1-57383DD66BEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{040E6214-9EFE-40D1-94E1-57383DD66BEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BFE1546A-5F32-41F8-BB7E-FEDA932467EE} = {EE686AE6-0D37-41D7-BE4B-98386422B8AA}
+		{5A1C33ED-A3F7-47C4-A3F5-2D2B9975E128} = {EE686AE6-0D37-41D7-BE4B-98386422B8AA}
+		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB} = {C754F17E-AE29-46AF-9832-B90664AC3B03}
+		{B96CE83B-FE8C-478D-BC19-585AE15B7128} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
+		{040E6214-9EFE-40D1-94E1-57383DD66BEB} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A85ACA9F-CB9B-4BEB-8A2C-373D8756283E}
+	EndGlobalSection
+EndGlobal

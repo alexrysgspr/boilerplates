@@ -1,0 +1,59 @@
+trigger:
+- main
+pool:
+  vmImage: 'ubuntu-latest'
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
+steps:
+- task: Cache@2
+  inputs:
+    key: 'nuget | "$(Agent.OS)" | **/packages.lock.json,!**/bin/**,!**/obj/**'
+    path: '$(NUGET_PACKAGES)'
+    restoreKeys: |
+      nuget | "$(Agent.OS)"
+    cacheHitVar: CACHE_RESTORED
+  displayName: Cache Nuget packages
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: 8.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+- task: DotNetCoreCLI@2
+  condition: ne(variables.CACHE_RESTORED, 'true')
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    arguments: '--configuration $(BuildConfiguration)'
+    projects: '**/*.csproj'
+- task: DotNetCoreCLI@2
+  displayName: Run Unit Tests
+  inputs:
+    command: test
+    projects: '**/*UnitTests.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: Publish Activity Tracking API
+  inputs:
+    command: publish
+    publishWebProjects: False
+    projects: '**/Si.ActivityTracking.Apps.Web.Api.csproj'
+    arguments: '--configuration $(BuildConfiguration) --self-contained true --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
+- task: CopyFiles@2
+  displayName: 'Copy ARM templates'
+  inputs:
+    SourceFolder: deploy
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+

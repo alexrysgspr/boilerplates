@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+	<TestRunParameters>
+		<Parameter name="VerifidentitySettings:ApiKey" value="GAeZQ6wMLIQlV56X" />
+		<Parameter name="VerifidentitySettings:ApiSecret" value="b74SjZj4ApOGc1lzYkrbQQFND1QF0nv1" />
+		<Parameter name="VerifidentitySettings:BaseUrl" value="https://api.cloudcheck.co.nz" />
+	</TestRunParameters>
+</RunSettings>
