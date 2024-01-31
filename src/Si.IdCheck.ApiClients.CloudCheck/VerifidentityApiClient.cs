@@ -2,7 +2,9 @@
 using Serilog;
 using Si.IdCheck.ApiClients.Verifidentity.Helpers;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+using Si.IdCheck.ApiClients.Verifidentity.Models.Requests.PeidLookup;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
+using Si.IdCheck.ApiClients.Verifidentity.Models.Responses.PeidLookup;
 
 namespace Si.IdCheck.ApiClients.Verifidentity;
 
@@ -11,6 +13,7 @@ public interface IVerifidentityApiClient
     public Task<GetAssociationResponse> GetAssociationAsync(GetAssociationRequest request, string apiKey, string apiSecret);
     public Task<GetAssociationsResponse> GetAssociationsAsync(GetAssociationsRequest request, string apiKey, string apiSecret);
     Task<ReviewMatchResponse> GetReviewMatchAsync(ReviewMatchRequest request, string apiKey, string apiSecret);
+    Task<PeidLookupResponse> LookupPeidAsync(PeidLookupRequest request, string apiKey, string apiSecret);
 }
 
 public class VerifidentityApiClient : IVerifidentityApiClient
@@ -110,6 +113,43 @@ public class VerifidentityApiClient : IVerifidentityApiClient
         catch (Exception e)
         {
             Logger.Error(e, "Failed to send Verifidentity request.");
+            throw;
+        }
+    }
+
+    public async Task<PeidLookupResponse> LookupPeidAsync(PeidLookupRequest request, string apiKey, string apiSecret)
+    {
+        var path = "/verify/peid/";
+        var content = request
+            .BuildFormUrlEncodedContent(path, apiKey, apiSecret);
+
+        var httpRequestMessage =
+            new HttpRequestMessage(HttpMethod.Post, path)
+            {
+                Content = content
+            };
+
+        try
+        {
+            var response = await _client.SendAsync(httpRequestMessage);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                await HandleVerifyFailureResponse(response);
+
+                var idCheckResponse = JsonSerializer.Deserialize<PeidLookupResponse>(responseString, JsonOptions);
+
+                return idCheckResponse;
+            }
+
+            var exception = new Exception("Failed to send PEID Lookup request.");
+            Logger.Error(exception, $"Failed to send PEID Lookup request. Error: {responseString}. StatusCode: {response.StatusCode}.");
+            throw exception;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Failed to send PEID Lookup request.");
             throw;
         }
     }

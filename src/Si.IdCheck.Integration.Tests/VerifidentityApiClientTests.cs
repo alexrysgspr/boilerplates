@@ -1,6 +1,7 @@
 using Si.IdCheck.ApiClients.Verifidentity;
 using Si.IdCheck.ApiClients.Verifidentity.Constants;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+using Si.IdCheck.ApiClients.Verifidentity.Models.Requests.PeidLookup;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
 
 namespace Si.IdCheck.Integration.Tests;
@@ -83,6 +84,16 @@ public class VerifidentityApiClientTests
         var response = await _client.GetReviewMatchAsync(request, _settings.ApiKey, _settings.ApiSecret);
     }
 
+    [TestMethod]
+    public async Task Peid_Lookup_Test()
+    {
+        var request = new PeidLookupRequest
+        {
+            Peid = 13231726
+        };
+
+        var response = await _client.LookupPeidAsync(request, _settings.ApiKey, _settings.ApiSecret);
+    }
 
     private void InitializeTest()
     {
