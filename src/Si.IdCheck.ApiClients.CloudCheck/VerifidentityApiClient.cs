@@ -136,9 +136,6 @@ public class VerifidentityApiClient : IVerifidentityApiClient
 
         var content = new FormUrlEncodedContent(pairs);
 
-        //var content = request
-        //    .BuildFormUrlEncodedContent(path, apiKey, apiSecret);
-
         var httpRequestMessage =
             new HttpRequestMessage(HttpMethod.Post, path)
             {
