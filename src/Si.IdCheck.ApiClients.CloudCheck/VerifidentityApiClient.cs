@@ -91,7 +91,7 @@ public class VerifidentityApiClient : IVerifidentityApiClient
         var pairs = VerifidentityHelpers
             .CreatePostRequest(request, path, apiKey, apiSecret)
             .ToDictionary()
-            .ToCamelCaseKeys();
+            .ToLowerCaseKeys();
 
         var content = new FormUrlEncodedContent(pairs);
         var httpRequestMessage =
@@ -129,8 +129,15 @@ public class VerifidentityApiClient : IVerifidentityApiClient
     public async Task<PeidLookupResponse> LookupPeidAsync(PeidLookupRequest request, string apiKey, string apiSecret)
     {
         var path = "/verify/peid/";
-        var content = request
-            .BuildFormUrlEncodedContent(path, apiKey, apiSecret);
+        var pairs = VerifidentityHelpers
+            .CreatePostRequest(request, path, apiKey, apiSecret)
+            .ToDictionary()
+            .ToLowerCaseKeys();
+
+        var content = new FormUrlEncodedContent(pairs);
+
+        //var content = request
+        //    .BuildFormUrlEncodedContent(path, apiKey, apiSecret);
 
         var httpRequestMessage =
             new HttpRequestMessage(HttpMethod.Post, path)

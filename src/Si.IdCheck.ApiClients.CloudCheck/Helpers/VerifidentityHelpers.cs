@@ -54,7 +54,7 @@ public static class VerifidentityHelpers
         return signatureHex.ToString().ToLower();
     }
 
-    public static VerifidentityRequest CreatePostRequest<T>(T request, string path, string apiKey, string apiSecret)
+    public static CloudCheckPostRequestBase CreatePostRequest<T>(T request, string path, string apiKey, string apiSecret)
     {
         var options = new JsonSerializerOptions
         {
@@ -68,38 +68,99 @@ public static class VerifidentityHelpers
 
         var timestamp = CreateUnixTimestamp();
 
-        var parameters = new SortedDictionary<string, string>
-        {
-            ["key"] = apiKey,
-            ["nonce"] = nonce,
-            ["timestamp"] = timestamp,
-            ["data"] = data
-        };
+        var parameters = CreateParameters(request, apiKey, nonce, timestamp, data);
 
         var signature = CreateSignature(parameters, path, apiSecret);
 
-        return new VerifidentityRequest
+        return CreatePostRequest(request, apiKey, nonce, signature, timestamp, data);
+    }
+
+    public static Dictionary<string, string> ToDictionary(this CloudCheckPostRequestBase request)
+    {
+        if (request == null)
         {
-            Key = apiKey,
-            Data = data,
-            Nonce = nonce,
-            Signature = signature,
-            TimeStamp = timestamp
-        };
+            return new Dictionary<string, string>();
+        }
+
+        var stringBuilder = new StringBuilder();
+        var dictionary = new Dictionary<string, string>();
+
+        switch (request)
+        {
+            case PeidLookupRequest peidRequest:
+                stringBuilder.Append(JsonSerializer.Serialize(request));
+                dictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(stringBuilder.ToString());
+                dictionary["peid"] = peidRequest.Peid.ToString();
+                break;
+            case VerifidentityRequest verifyIdentityRequest:
+                stringBuilder.Append(JsonSerializer.Serialize(verifyIdentityRequest));
+                dictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(stringBuilder.ToString());
+                break;
+            default:
+                break;
+        }
+
+        return dictionary;
     }
 
-    public static Dictionary<string, string> ToDictionary(this VerifidentityRequest request)
+    public static Dictionary<string, string> ToLowerCaseKeys(this IDictionary<string, string> dictionary)
     {
-        var json = JsonSerializer.Serialize(request);
-        var dictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+        if (dictionary == null)
+        {
+            return new Dictionary<string, string>();
+        }
 
-        return dictionary.ToCamelCaseKeys();
-    }
-
-    public static Dictionary<string, string> ToCamelCaseKeys(this IDictionary<string, string> dictionary)
-    {
         return dictionary
-            .Select(kvp => new KeyValuePair<string, string>(char.ToLower(kvp.Key[0]) + kvp.Key[1..], kvp.Value))
+            .Select(kvp => new KeyValuePair<string, string>(kvp.Key.ToLower(), kvp.Value))
             .ToDictionary();
+    }
+
+    public static SortedDictionary<string, string> CreateParameters<T>(T request, string key, string nonce, string timestamp, string data)
+    {
+        var result = new SortedDictionary<string, string>
+        {
+            ["key"] = key,
+            ["nonce"] = nonce,
+            ["timestamp"] = timestamp
+        };
+
+        switch (request)
+        {
+            case PeidLookupRequest peidRequest:
+                result.Add("peid", peidRequest.Peid.ToString());
+                break;
+            case ReviewMatchRequest:
+                result.Add("data", data);
+                break;
+        }
+
+        return result;
+    }
+
+    private static CloudCheckPostRequestBase CreatePostRequest<T>(T request, string key, string nonce, string signature, string timestamp, string data)
+    {
+        switch (request)
+        {
+            case PeidLookupRequest peidRequest:
+                return new PeidLookupRequest
+                {
+                    Peid = peidRequest.Peid,
+                    Key = key,
+                    Nonce = nonce,
+                    Signature = signature,
+                    TimeStamp = timestamp
+                };
+            case ReviewMatchRequest verifyRequest:
+                return new VerifidentityRequest
+                {
+                    Data = data,
+                    Key = key,
+                    Nonce = nonce,
+                    Signature = signature,
+                    TimeStamp = timestamp
+                };
+        }
+
+        return null;
     }
 }

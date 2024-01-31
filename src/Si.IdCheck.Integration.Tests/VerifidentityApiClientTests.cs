@@ -70,11 +70,11 @@ public class VerifidentityApiClientTests
     {
         var request = new ReviewMatchRequest
         {
-            AssociationReference = "113f6ed3-78af-417a-a0c9-c441d013752c",
+            AssociationReference = "b660742a-55fd-4594-8169-0c7a224666b1",
             Review = new Review
             {
                 Decision = VerifidentityDecisionConsts.Cleared,
-                MatchId = "2dfdf7ba113f6ed3-78af-417a-a0c9-c441d013752c",
+                MatchId = "5a176003033ed23ee22269cdaa293982c5443e7bc1f30ec88622e73d2d6ab113",
                 Notes = "Not our client"
             }
         };
