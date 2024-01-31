@@ -14,7 +14,8 @@ public static class ServiceCollectionExtensions
             });
 
         services
-            .Configure<ReviewMatchSettings>(configuration.GetSection(nameof(ReviewMatchSettings)));
+            .Configure<ReviewMatchSettings>(configuration.GetSection(nameof(ReviewMatchSettings)))
+            .Configure<GetAssociationsSettings>(configuration.GetSection(nameof(GetAssociationsSettings)));
 
         return services;
     }

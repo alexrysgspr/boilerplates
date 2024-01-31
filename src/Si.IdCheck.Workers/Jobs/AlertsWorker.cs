@@ -44,6 +44,7 @@ public class AlertsWorker : CronJobWorker
 
                 var associationResult = await mediator.Send(associationRequest, cancellationToken);
 
+
                 foreach (var match in associationResult.Value.Matches)
                 {
                     var lookupPeidRequest = new LookupPeid
@@ -67,6 +68,7 @@ public class AlertsWorker : CronJobWorker
         }
         catch (Exception e)
         {
+            await Task.Delay(3000, cancellationToken);
             isRunning = false;
             Logger.Error(e, "An error occurred while running AlertsWorker");
         }

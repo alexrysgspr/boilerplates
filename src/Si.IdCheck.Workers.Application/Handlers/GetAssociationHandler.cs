@@ -30,6 +30,11 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
         var association = await _client.GetAssociationAsync(verifidentityRequest, _verifidentitySettings.ApiKey,
             _verifidentitySettings.ApiSecret);
 
+        association.Matches = association
+            .Matches
+            .Where(x => x.Type == "RELATIONSHIP")
+            .ToList();
+
         return Result.Success(association);
     }
 }
