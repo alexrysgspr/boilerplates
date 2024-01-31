@@ -24,9 +24,6 @@
     "keyVaultName": {
       "type": "string"
     },
-    "authUrl": {
-      "type": "string"
-    },
     "appInsightsName": {
       "type": "string"
     },
@@ -39,21 +36,13 @@
     "appStatusTestMetricsAlertName": {
       "type": "string"
     },
-    "customDomainName": {
-      "type": "string"
-    },
-    "storageAccountName": {
-      "type": "string"
-    },
     "workSpaceName": {
       "type": "string"
     }
   },
   "variables": {
-    "dbAdminLogin": "[concat('l', uniqueString(resourceGroup().id))]",
-    "dbAdminPassword": "[concat('P', uniqueString(resourceGroup().id), 'x', '!')]",
-    "costcentreTag": "si-activity-logging",
-    "appStatusAccessKey": "cXRgHt2fv5hdwUEq",
+    "costcentreTag": "si-idcheck",
+    "appStatusAccessKey": "evFr4sNkzR6xB9mT",
     "adminAdGroup": "41d21fbb-fb39-4e06-a55b-193ffc1a61c1"
   },
   "resources": [
@@ -138,20 +127,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('storageAccountName')]",
-      "apiVersion": "2018-02-01",
-      "location": "[resourceGroup().location]",
-      "kind": "StorageV2",
-      "sku": {
-        "name": "Standard_LRS",
-        "tier": "Standard"
-      },
-      "properties": {
-        "accessTier": "Hot"
       }
     },
     {

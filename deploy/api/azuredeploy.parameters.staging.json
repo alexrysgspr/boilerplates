@@ -15,31 +15,28 @@
       "value": "si-s-web-apps-ag"
     },
     "webAppName": {
-      "value": "si-s-activity-logs-api-wa"
+      "value": "si-s-idcheck-api-wa"
     },
     "keyVaultName": {
-      "value": "si-s-activities-api-kv"
+      "value": "si-s-idcheck-api-kv"
     },
     "authUrl": {
       "value": "https://auth.swiftid-cloud.com.au/"
     },
     "customDomainName": {
-      "value": "activity-logs-api.swiftid.com.au"
+      "value": "s-idcheck-api.swiftid.com.au"
     },
     "appInsightsName": {
-      "value": "si-s-activity-logs-api-ai"
+      "value": "si-s-idcheck-api-ai"
     },
     "pingTestName": {
-      "value": "si-s-activity-logs-api-ping-test"
+      "value": "si-s-idcheck-api-ping-test"
     },
     "appStatusTestName": {
-      "value": "si-s-activity-logs-api-appstatus-test"
+      "value": "si-s-idcheck-api-appstatus-test"
     },
     "appStatusTestMetricsAlertName": {
-      "value": "si-s-activity-logs-api-appstatus-test-ma"
-    },
-    "storageAccountName": {
-      "value": "sipactivitylogssa"
+      "value": "si-s-idcheck-api-appstatus-test-ma"
     },
     "workSpaceName": {
       "value": "si-s-la-ws"

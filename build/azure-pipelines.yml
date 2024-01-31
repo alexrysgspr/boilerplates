@@ -39,11 +39,19 @@ steps:
     projects: '**/*UnitTests.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 - task: DotNetCoreCLI@2
-  displayName: Publish Activity Tracking API
+  displayName: Publish Id Check API
   inputs:
     command: publish
     publishWebProjects: False
-    projects: '**/Si.ActivityTracking.Apps.Web.Api.csproj'
+    projects: '**/Si.IdCheck.Api.csproj'
+    arguments: '--configuration $(BuildConfiguration) --self-contained true --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
+    - task: DotNetCoreCLI@2
+  displayName: Publish Id Check Worker
+  inputs:
+    command: publish
+    publishWebProjects: False
+    projects: '**/Si.IdCheck.Workers.csproj'
     arguments: '--configuration $(BuildConfiguration) --self-contained true --output $(build.artifactstagingdirectory)'
     zipAfterPublish: True
 - task: CopyFiles@2

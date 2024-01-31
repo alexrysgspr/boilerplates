@@ -24,9 +24,6 @@
     "keyVaultName": {
       "type": "string"
     },
-    "authUrl": {
-      "type": "string"
-    },
     "appInsightsName": {
       "type": "string"
     },
@@ -39,21 +36,13 @@
     "appStatusTestMetricsAlertName": {
       "type": "string"
     },
-    "customDomainName": {
-      "type": "string"
-    },
-    "storageAccountName": {
-      "type": "string"
-    },
     "workSpaceName": {
       "type": "string"
     }
   },
   "variables": {
-    "dbAdminLogin": "[concat('l', uniqueString(resourceGroup().id))]",
-    "dbAdminPassword": "[concat('P', uniqueString(resourceGroup().id), 'x', '!')]",
-    "costcentreTag": "si-activity-logging",
-    "appStatusAccessKey": "cXRgHt2fv5hdwUEq",
+    "costcentreTag": "si-idcheck",
+    "appStatusAccessKey": "z5AsNSw4uG8Yyctp",
     "adminAdGroup": "41d21fbb-fb39-4e06-a55b-193ffc1a61c1"
   },
   "resources": [
@@ -141,20 +130,6 @@
       }
     },
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('storageAccountName')]",
-      "apiVersion": "2018-02-01",
-      "location": "[resourceGroup().location]",
-      "kind": "StorageV2",
-      "sku": {
-        "name": "Standard_LRS",
-        "tier": "Standard"
-      },
-      "properties": {
-        "accessTier": "Hot"
-      }
-    },
-    {
       "type": "Microsoft.Web/sites",
       "name": "[parameters('webAppName')]",
       "kind": "api",
@@ -221,10 +196,6 @@
                 "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]"
               ],
               "properties": {
-                "SiActivityTrackingStorageAccount": {
-                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-                  "type": "Custom"
-                }
               }
             },
             {
@@ -234,13 +205,11 @@
               "dependsOn": [
                 "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]",
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
               ],
               "properties": {
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
                 "ApplicationInsights__InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
                 "ASPNETCORE_ENVIRONMENT": "[parameters('ASPNETCORE_ENVIRONMENT')]",
-                "IdentitySettings__BaseUrl": "[parameters('authUrl')]",
                 "AppSettings__KeyVaultUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).VaultUri]",
                 "AppSettings__Environment": "[parameters('ASPNETCORE_ENVIRONMENT')]",
                 "LogSettings__LogEventLevel": "Information",
@@ -302,7 +271,7 @@
           }
         ],
         "Configuration": {
-          "WebTest": "[concat('<WebTest Name=\"', parameters('appStatusTestName'), '\"',  ' Id=\"', guid(resourceGroup().id) ,'\"    Enabled=\"True\" CssProjectStructure=\"\" CssIteration=\"\" Timeout=\"30\" WorkItemIds=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" Description=\"\" CredentialUserName=\"\" CredentialPassword=\"\" PreAuthenticate=\"True\" Proxy=\"default\" StopOnError=\"False\" RecordedResultFile=\"\" ResultsLocale=\"\">        <Items>        <Request Method=\"GET\" Guid=\"a5f10126-e4cd-570d-961c-cea43999a200\" Version=\"1.1\" Url=\"', concat('https://', parameters('customDomainName'), '/_appstatus/', variables('appStatusAccessKey')),'\" ThinkTime=\"0\" Timeout=\"300\" ParseDependentRequests=\"True\" FollowRedirects=\"True\" RecordResult=\"True\" Cache=\"False\" ResponseTimeGoal=\"0\" Encoding=\"utf-8\" ExpectedHttpStatusCode=\"200\" ExpectedResponseUrl=\"\" ReportingName=\"\" IgnoreHttpStatusCode=\"False\" /></Items></WebTest>')]"
+          "WebTest": "[concat('<WebTest Name=\"', parameters('appStatusTestName'), '\"',  ' Id=\"', guid(resourceGroup().id) ,'\"    Enabled=\"True\" CssProjectStructure=\"\" CssIteration=\"\" Timeout=\"30\" WorkItemIds=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" Description=\"\" CredentialUserName=\"\" CredentialPassword=\"\" PreAuthenticate=\"True\" Proxy=\"default\" StopOnError=\"False\" RecordedResultFile=\"\" ResultsLocale=\"\">        <Items>        <Request Method=\"GET\" Guid=\"a5f10126-e4cd-570d-961c-cea43999a200\" Version=\"1.1\" Url=\"', concat('https://', parameters('webAppName'), '.azurewebsites.net', '/_appstatus/', variables('appStatusAccessKey')),'\" ThinkTime=\"0\" Timeout=\"300\" ParseDependentRequests=\"True\" FollowRedirects=\"True\" RecordResult=\"True\" Cache=\"False\" ResponseTimeGoal=\"0\" Encoding=\"utf-8\" ExpectedHttpStatusCode=\"200\" ExpectedResponseUrl=\"\" ReportingName=\"\" IgnoreHttpStatusCode=\"False\" /></Items></WebTest>')]"
         },
         "SyntheticMonitorId": "[parameters('appStatusTestName')]"
       }
@@ -340,7 +309,7 @@
           }
         ],
         "Configuration": {
-          "WebTest": "[concat('<WebTest Name=\"', parameters('pingTestName'), '\"',  ' Id=\"', guid(resourceGroup().id) ,'\"    Enabled=\"True\" CssProjectStructure=\"\" CssIteration=\"\" Timeout=\"30\" WorkItemIds=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" Description=\"\" CredentialUserName=\"\" CredentialPassword=\"\" PreAuthenticate=\"True\" Proxy=\"default\" StopOnError=\"False\" RecordedResultFile=\"\" ResultsLocale=\"\">        <Items>        <Request Method=\"GET\" Guid=\"a5f10126-e4cd-570d-961c-cea43999a200\" Version=\"1.1\" Url=\"', concat('https://', parameters('customDomainName'), '/_ping'),'\" ThinkTime=\"0\" Timeout=\"300\" ParseDependentRequests=\"True\" FollowRedirects=\"True\" RecordResult=\"True\" Cache=\"False\" ResponseTimeGoal=\"0\" Encoding=\"utf-8\" ExpectedHttpStatusCode=\"200\" ExpectedResponseUrl=\"\" ReportingName=\"\" IgnoreHttpStatusCode=\"False\" /></Items></WebTest>')]"
+          "WebTest": "[concat('<WebTest Name=\"', parameters('pingTestName'), '\"',  ' Id=\"', guid(resourceGroup().id) ,'\"    Enabled=\"True\" CssProjectStructure=\"\" CssIteration=\"\" Timeout=\"30\" WorkItemIds=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" Description=\"\" CredentialUserName=\"\" CredentialPassword=\"\" PreAuthenticate=\"True\" Proxy=\"default\" StopOnError=\"False\" RecordedResultFile=\"\" ResultsLocale=\"\">        <Items>        <Request Method=\"GET\" Guid=\"a5f10126-e4cd-570d-961c-cea43999a200\" Version=\"1.1\" Url=\"', concat('https://', parameters('webAppName'), '.azurewebsites.net', '/_ping'),'\" ThinkTime=\"0\" Timeout=\"300\" ParseDependentRequests=\"True\" FollowRedirects=\"True\" RecordResult=\"True\" Cache=\"False\" ResponseTimeGoal=\"0\" Encoding=\"utf-8\" ExpectedHttpStatusCode=\"200\" ExpectedResponseUrl=\"\" ReportingName=\"\" IgnoreHttpStatusCode=\"False\" /></Items></WebTest>')]"
         },
         "SyntheticMonitorId": "[parameters('pingTestName')]"
       }
