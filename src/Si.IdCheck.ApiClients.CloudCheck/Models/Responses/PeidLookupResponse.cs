@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.Verifidentity.Models.Responses.PeidLookup;
+﻿namespace Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
 
 public class PeidLookupResponse
 {
@@ -20,7 +20,7 @@ public class MatchDetails
     public IList<AssociateDetails> Associates { get; set; }
     public int Peid { get; set; }
     public IList<string> Images { get; set; }
-    public IList<Country> Countries { get; set; }
+    public IList<PeidLookupResponseCountry> Countries { get; set; }
 }
 
 public class ContentDetails
@@ -29,7 +29,7 @@ public class ContentDetails
     public IList<PrimaryOccupationDetails> PrimaryOccupation { get; set; }
     public string Description { get; set; }
     public IList<PreviousRoleDetails> PreviousRoles { get; set; }
-    public IList<string> Sources { get; set; } 
+    public IList<string> Sources { get; set; }
 }
 
 public class PrimaryOccupationDetails
@@ -76,7 +76,7 @@ public class AssociateDetails
     public string Description2 { get; set; }
 }
 
-public class Country
+public class PeidLookupResponseCountry
 {
     public string Name { get; set; }
     public string Type { get; set; }

@@ -38,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.Verif
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ServiceBus", "Si.Onboarding.ServiceBus\Si.IdCheck.ServiceBus.csproj", "{040E6214-9EFE-40D1-94E1-57383DD66BEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Si.IdCheck.Workers.Application", "Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj", "{375A94F5-1377-4A01-8984-BB83172F64A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{040E6214-9EFE-40D1-94E1-57383DD66BEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{040E6214-9EFE-40D1-94E1-57383DD66BEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{040E6214-9EFE-40D1-94E1-57383DD66BEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{375A94F5-1377-4A01-8984-BB83172F64A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{375A94F5-1377-4A01-8984-BB83172F64A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{375A94F5-1377-4A01-8984-BB83172F64A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{375A94F5-1377-4A01-8984-BB83172F64A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

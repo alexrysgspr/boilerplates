@@ -1,10 +1,9 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using Serilog;
 using Si.IdCheck.ApiClients.Verifidentity.Helpers;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
-using Si.IdCheck.ApiClients.Verifidentity.Models.Requests.PeidLookup;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
-using Si.IdCheck.ApiClients.Verifidentity.Models.Responses.PeidLookup;
 
 namespace Si.IdCheck.ApiClients.Verifidentity;
 
@@ -12,7 +11,7 @@ public interface IVerifidentityApiClient
 {
     public Task<GetAssociationResponse> GetAssociationAsync(GetAssociationRequest request, string apiKey, string apiSecret);
     public Task<GetAssociationsResponse> GetAssociationsAsync(GetAssociationsRequest request, string apiKey, string apiSecret);
-    Task<ReviewMatchResponse> GetReviewMatchAsync(ReviewMatchRequest request, string apiKey, string apiSecret);
+    Task<ReviewMatchResponse> ReviewMatchAsync(ReviewMatchRequest request, string apiKey, string apiSecret);
     Task<PeidLookupResponse> LookupPeidAsync(PeidLookupRequest request, string apiKey, string apiSecret);
 }
 
@@ -43,10 +42,14 @@ public class VerifidentityApiClient : IVerifidentityApiClient
                 return response;
             }
 
-            throw new Exception();
+            var exception = new Exception($"Verifidentity check failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
+            Logger.Error(exception, "An error occurred while sending request for get association.");
+
+            throw exception;
         }
         catch (Exception e)
         {
+            Logger.Error(e, "An error occurred while sending request for get association.");
             throw;
         }
     }
@@ -55,6 +58,7 @@ public class VerifidentityApiClient : IVerifidentityApiClient
     {
         var path = "/watchlist/associations/";
         var queryParams = request.ToQueryParams(path, apiKey, apiSecret);
+
 
         try
         {
@@ -69,15 +73,19 @@ public class VerifidentityApiClient : IVerifidentityApiClient
                 return response;
             }
 
-            throw new Exception();
+            var exception = new Exception($"Verifidentity check failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
+            Logger.Error(exception, "An error occurred while sending request for get associations.");
+
+            throw exception;
         }
         catch (Exception e)
         {
+            Logger.Error(e, "An error occurred while sending request for get associations.");
             throw;
         }
     }
 
-    public async Task<ReviewMatchResponse> GetReviewMatchAsync(ReviewMatchRequest request, string apiKey, string apiSecret)
+    public async Task<ReviewMatchResponse> ReviewMatchAsync(ReviewMatchRequest request, string apiKey, string apiSecret)
     {
         var path = "/watchlist/review-match/";
         var pairs = VerifidentityHelpers
@@ -106,13 +114,14 @@ public class VerifidentityApiClient : IVerifidentityApiClient
                 return idCheckResponse;
             }
 
-            var exception = new Exception("Failed to send Verifidentity request.");
-            Logger.Error(exception, $"Failed to send Verifidentity request. Error: {responseString}. StatusCode: {response.StatusCode}.");
+            var exception = new Exception($"Verifidentity check failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
+            Logger.Error(exception, "An error occurred while sending request for review match.");
+
             throw exception;
         }
         catch (Exception e)
         {
-            Logger.Error(e, "Failed to send Verifidentity request.");
+            Logger.Error(e, "An error occurred while sending request for review match..");
             throw;
         }
     }
@@ -143,13 +152,13 @@ public class VerifidentityApiClient : IVerifidentityApiClient
                 return idCheckResponse;
             }
 
-            var exception = new Exception("Failed to send PEID Lookup request.");
-            Logger.Error(exception, $"Failed to send PEID Lookup request. Error: {responseString}. StatusCode: {response.StatusCode}.");
+            var exception = new Exception($"Verifidentity check failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
+            Logger.Error(exception, "An error occurred while sending request for lookup peid.");
             throw exception;
         }
         catch (Exception e)
         {
-            Logger.Error(e, "Failed to send PEID Lookup request.");
+            Logger.Error(e, "An error occurred while sending request for lookup peid.");
             throw;
         }
     }
@@ -160,7 +169,7 @@ public class VerifidentityApiClient : IVerifidentityApiClient
         var response =
             JsonSerializer.Deserialize<VerifidentityResponse>(responseString, JsonOptions);
 
-        if (response is { Verification.Error: { } } )
+        if (response is { Verification.Error: { } })
         {
             var error = new Exception($"Verifidentity check failed. Response error code: {response.Verification.Error.Value}. Message: '{response.Verification.Message}'.");
             Logger.Error(error, error.Message);

@@ -1,7 +1,6 @@
 using Si.IdCheck.ApiClients.Verifidentity;
 using Si.IdCheck.ApiClients.Verifidentity.Constants;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
-using Si.IdCheck.ApiClients.Verifidentity.Models.Requests.PeidLookup;
 using Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
 
 namespace Si.IdCheck.Integration.Tests;
@@ -46,7 +45,6 @@ public class VerifidentityApiClientTests
             PageSize = 1000
         };
 
-
         var associations = new List<Association>();
 
         var isLastPage = false;
@@ -81,7 +79,7 @@ public class VerifidentityApiClientTests
             }
         };
 
-        var response = await _client.GetReviewMatchAsync(request, _settings.ApiKey, _settings.ApiSecret);
+        var response = await _client.ReviewMatchAsync(request, _settings.ApiKey, _settings.ApiSecret);
     }
 
     [TestMethod]

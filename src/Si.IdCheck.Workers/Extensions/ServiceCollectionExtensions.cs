@@ -1,4 +1,5 @@
-﻿using Si.IdCheck.Workers.HealthChecks;
+﻿using Si.IdCheck.Workers.Application.Extensions;
+using Si.IdCheck.Workers.HealthChecks;
 using Si.IdCheck.Workers.Jobs;
 using Si.IdCheck.Workers.Services;
 using Si.IdCheck.Workers.Settings;
@@ -14,16 +15,11 @@ public static class ServiceCollectionExtensions
         services
             .AddOptions()
             .AddSingleton<IDateTimeService, DateTimeService>()
-            .AddMediatR(mediatorConfig =>
-            {
-                //todo
-                mediatorConfig.RegisterServicesFromAssembly(typeof(Program).Assembly);
-            })
             .AddServiceBus(configuration)
             .AddVerifidentity(configuration)
+            .AddApplicationDependencies(configuration)
             //.AddHostedService<JobsWorker>()
             .AddHostedService<AlertsWorker>()
-            .AddSingleton<IAlertsWorkerService, AlertsWorkerService>()
             .AddConfigurations(configuration)
             .AddHealthChecks()
             .AddCheck<PingHealthCheck>(nameof(PingHealthCheck));

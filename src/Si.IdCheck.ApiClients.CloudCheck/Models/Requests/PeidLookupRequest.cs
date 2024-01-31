@@ -1,6 +1,6 @@
 ﻿using Si.IdCheck.ApiClients.Verifidentity.Helpers;
 
-namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests.PeidLookup;
+namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
 
 public class PeidLookupRequest
 {
@@ -39,4 +39,4 @@ public static class PeidLookupRequestExtensions
         return new FormUrlEncodedContent(formData);
     }
 }
-    
+

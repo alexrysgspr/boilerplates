@@ -12,7 +12,7 @@ public class GetAssociationResponse
     /// </summary>
     public PersonDetail PersonDetail { get; set; }
     public EntityDetail EntityDetail { get; set; }
-    public Country Country { get; set; }
+    public GetAssociationResponseCountry Country { get; set; }
     public string WhitelistPeids { get; set; }
     public string CreatedDate { get; set; }
     public string DeletedDate { get; set; }
@@ -23,7 +23,7 @@ public class GetAssociationResponse
     public List<Match> Matches { get; set; }
 }
 
-public class Country
+public class GetAssociationResponseCountry
 {
     public string Code { get; set; }
     public string Name { get; set; }

@@ -13,12 +13,11 @@
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
-		<PackageReference Include="MediatR" Version="12.2.0" />
 		<PackageReference Include="Cronos" Version="0.7.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Verifidentity.csproj" />
+	  <ProjectReference Include="..\Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj" />
 	  <ProjectReference Include="..\Si.Onboarding.ServiceBus\Si.IdCheck.ServiceBus.csproj" />
 	</ItemGroup>
 
