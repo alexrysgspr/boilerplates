@@ -8,17 +8,18 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.2" />
+		<PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.1.24" />
 		<PackageReference Include="Serilog" Version="3.1.1" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
-		<PackageReference Include="Cronos" Version="0.7.1" />
+		<PackageReference Include="Cronos" Version="0.8.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj" />
-	  <ProjectReference Include="..\Si.Onboarding.ServiceBus\Si.IdCheck.ServiceBus.csproj" />
 	</ItemGroup>
 
 </Project>

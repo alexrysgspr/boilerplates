@@ -1,4 +1,4 @@
-﻿using Si.IdCheck.Workers.Application.Extensions;
+﻿using Microsoft.Extensions.Azure;
 using Si.IdCheck.Workers.HealthChecks;
 using Si.IdCheck.Workers.Jobs;
 using Si.IdCheck.Workers.Services;
@@ -15,14 +15,26 @@ public static class ServiceCollectionExtensions
         services
             .AddOptions()
             .AddSingleton<IDateTimeService, DateTimeService>()
-            .AddServiceBus(configuration)
             .AddVerifidentity(configuration)
             .AddApplicationDependencies(configuration)
-            //.AddHostedService<JobsWorker>()
             .AddHostedService<AlertsWorker>()
             .AddConfigurations(configuration)
             .AddHealthChecks()
             .AddCheck<PingHealthCheck>(nameof(PingHealthCheck));
+
+        services
+            .AddAzureClients(builder =>
+            {
+                builder
+                    .AddServiceBusClient(configuration.GetConnectionString("Servicebus"))
+                    .WithName("SwiftId")
+                    .ConfigureOptions(options =>
+                    {
+                        options.RetryOptions.Delay = TimeSpan.FromMilliseconds(50);
+                        options.RetryOptions.MaxDelay = TimeSpan.FromSeconds(5);
+                        options.RetryOptions.MaxRetries = 3;
+                    });
+            });
 
         return services;
     }

@@ -18,7 +18,7 @@ public class AlertsWorker : CronJobWorker
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    private bool isRunning;
+    private bool isRunning = true;
 
 
     public override async Task DoWorkAsync(CancellationToken cancellationToken)

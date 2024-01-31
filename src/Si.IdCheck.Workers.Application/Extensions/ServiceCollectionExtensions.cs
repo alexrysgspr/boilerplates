@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Si.IdCheck.Workers.Application;
 using Si.IdCheck.Workers.Application.Settings;
 
-namespace Si.IdCheck.Workers.Application.Extensions;
+// ReSharper disable CheckNamespace
+namespace Microsoft.Extensions.DependencyInjection;
+// ReSharper restore CheckNamespace
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationDependencies(this IServiceCollection services, IConfiguration configuration)
