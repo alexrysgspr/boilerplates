@@ -46,7 +46,7 @@ steps:
     projects: '**/Si.IdCheck.Api.csproj'
     arguments: '--configuration $(BuildConfiguration) --self-contained true --output $(build.artifactstagingdirectory)'
     zipAfterPublish: True
-    - task: DotNetCoreCLI@2
+- task: DotNetCoreCLI@2
   displayName: Publish Id Check Worker
   inputs:
     command: publish
