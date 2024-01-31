@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Serilog;
-using Si.Onboarding.ServiceBus;
+using Si.IdCheck.ServiceBus;
 using ILogger = Serilog.ILogger;
 
 namespace Si.IdCheck.Workers.Jobs;

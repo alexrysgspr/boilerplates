@@ -1,6 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
-using Si.Onboarding.ServiceBus;
+using Si.IdCheck.ServiceBus;
 
 // ReSharper disable CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;

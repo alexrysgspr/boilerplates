@@ -1,6 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 
-namespace Si.Onboarding.ServiceBus
+namespace Si.IdCheck.ServiceBus
 {
     public interface IServiceBusFactory
     {
