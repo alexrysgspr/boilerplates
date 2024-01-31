@@ -19,7 +19,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Verifidentity.csproj" />
-	  <ProjectReference Include="..\Si.Onboarding.ServiceBus\Si.Onboarding.ServiceBus.csproj" />
+	  <ProjectReference Include="..\Si.Onboarding.ServiceBus\Si.IdCheck.ServiceBus.csproj" />
 	</ItemGroup>
 
 </Project>

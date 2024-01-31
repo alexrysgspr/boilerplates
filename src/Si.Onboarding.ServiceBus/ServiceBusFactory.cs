@@ -1,31 +1,31 @@
 ﻿using Azure.Messaging.ServiceBus;
 
-namespace Si.Onboarding.ServiceBus;
-
-
-public interface IServiceBusFactory
+namespace Si.Onboarding.ServiceBus
 {
-    ServiceBusProcessor CreateProcessor(string queueName);
-}
-
-public class ServiceBusFactory : IServiceBusFactory
-{
-    private readonly ServiceBusClient _client;
-
-    public ServiceBusFactory(ServiceBusClient client)
+    public interface IServiceBusFactory
     {
-        _client = client;
+        ServiceBusProcessor CreateProcessor(string queueName);
     }
 
-    public ServiceBusProcessor CreateProcessor(string queueName)
+    public class ServiceBusFactory : IServiceBusFactory
     {
-        var processor = _client.CreateProcessor(queueName, new ServiceBusProcessorOptions
-        {
-            AutoCompleteMessages = true,
-            MaxAutoLockRenewalDuration = TimeSpan.FromMinutes(5),
-            MaxConcurrentCalls = 1
-        });
+        private readonly ServiceBusClient _client;
 
-        return processor;
+        public ServiceBusFactory(ServiceBusClient client)
+        {
+            _client = client;
+        }
+
+        public ServiceBusProcessor CreateProcessor(string queueName)
+        {
+            var processor = _client.CreateProcessor(queueName, new ServiceBusProcessorOptions
+            {
+                AutoCompleteMessages = true,
+                MaxAutoLockRenewalDuration = TimeSpan.FromMinutes(5),
+                MaxConcurrentCalls = 1
+            });
+
+            return processor;
+        }
     }
 }

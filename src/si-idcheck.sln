@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C754F17E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.Verifidentity", "Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Verifidentity.csproj", "{B96CE83B-FE8C-478D-BC19-585AE15B7128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Si.Onboarding.ServiceBus", "Si.Onboarding.ServiceBus\Si.Onboarding.ServiceBus.csproj", "{040E6214-9EFE-40D1-94E1-57383DD66BEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ServiceBus", "Si.Onboarding.ServiceBus\Si.IdCheck.ServiceBus.csproj", "{040E6214-9EFE-40D1-94E1-57383DD66BEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
