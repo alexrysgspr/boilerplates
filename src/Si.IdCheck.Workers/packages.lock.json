@@ -127,6 +127,15 @@
           "System.Memory.Data": "1.0.2"
         }
       },
+      "Azure.Data.Tables": {
+        "type": "Transitive",
+        "resolved": "12.8.2",
+        "contentHash": "Pb1HbhNvhYOWmsSHxRXElhkD5A2Gk7ifPjnUjN+U3lvGy2x4kSfjg1+KMax/16xBh49Cmlok3mS5qS39otkQlg==",
+        "dependencies": {
+          "Azure.Core": "1.36.0",
+          "System.Text.Json": "4.7.2"
+        }
+      },
       "Azure.Identity": {
         "type": "Transitive",
         "resolved": "1.10.3",
@@ -1640,13 +1649,23 @@
           "Serilog": "[3.1.1, )"
         }
       },
+      "si.idcheck.azuretablestorage": {
+        "type": "Project",
+        "dependencies": {
+          "Azure.Data.Tables": "[12.8.2, )",
+          "Microsoft.Extensions.Azure": "[1.7.1, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[8.0.0, )",
+          "Microsoft.Extensions.Hosting.Abstractions": "[8.0.0, )"
+        }
+      },
       "si.idcheck.workers.application": {
         "type": "Project",
         "dependencies": {
           "Ardalis.Result": "[7.2.0, )",
           "Ardalis.Result.FluentValidation": "[7.2.0, )",
           "MediatR": "[12.2.0, )",
-          "Si.IdCheck.ApiClients.Verifidentity": "[1.0.0, )"
+          "Si.IdCheck.ApiClients.Verifidentity": "[1.0.0, )",
+          "Si.IdCheck.AzureTableStorage": "[1.0.0, )"
         }
       }
     }

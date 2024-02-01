@@ -16,6 +16,9 @@ public static class ServiceCollectionExtensions
             });
 
         services
+            .AddTableStorageServices(configuration);
+
+        services
             .Configure<ReviewMatchSettings>(configuration.GetSection(nameof(ReviewMatchSettings)))
             .Configure<GetAssociationsSettings>(configuration.GetSection(nameof(GetAssociationsSettings)));
 
