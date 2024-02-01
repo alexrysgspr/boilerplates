@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Responses;
+﻿namespace Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
 
 public class PeidLookupResponse
 {

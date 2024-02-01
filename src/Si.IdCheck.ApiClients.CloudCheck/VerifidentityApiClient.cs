@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Text.Json;
 using Serilog;
-using Si.IdCheck.ApiClients.Cloudcheck.Helpers;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Responses;
+using Si.IdCheck.ApiClients.Verifidentity.Helpers;
+using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+using Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
 
-namespace Si.IdCheck.ApiClients.Cloudcheck;
+namespace Si.IdCheck.ApiClients.Verifidentity;
 
-public interface ICloudcheckApiClient
+public interface IVerifidentityApiClient
 {
     public Task<GetAssociationResponse> GetAssociationAsync(GetAssociationRequest request, string apiKey, string apiSecret);
     public Task<GetAssociationsResponse> GetAssociationsAsync(GetAssociationsRequest request, string apiKey, string apiSecret);
@@ -15,12 +15,12 @@ public interface ICloudcheckApiClient
     Task<PeidLookupResponse> LookupPeidAsync(PeidLookupRequest request, string apiKey, string apiSecret);
 }
 
-public class CloudcheckApiClient : ICloudcheckApiClient
+public class VerifidentityApiClient : IVerifidentityApiClient
 {
     private readonly HttpClient _client;
-    private static readonly ILogger Logger = Log.ForContext<CloudcheckApiClient>();
+    private static readonly ILogger Logger = Log.ForContext<VerifidentityApiClient>();
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
-    public CloudcheckApiClient(HttpClient client)
+    public VerifidentityApiClient(HttpClient client)
     {
         _client = client;
     }
@@ -42,7 +42,7 @@ public class CloudcheckApiClient : ICloudcheckApiClient
                 return response;
             }
 
-            var exception = new Exception($"Cloudcheck check failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"Verifidentity check failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
             Logger.Error(exception, "An error occurred while sending request for get association.");
 
             throw exception;
@@ -73,7 +73,7 @@ public class CloudcheckApiClient : ICloudcheckApiClient
                 return response;
             }
 
-            var exception = new Exception($"Cloudcheck check failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"Verifidentity check failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
             Logger.Error(exception, "An error occurred while sending request for get associations.");
 
             throw exception;
@@ -88,7 +88,7 @@ public class CloudcheckApiClient : ICloudcheckApiClient
     public async Task<ReviewMatchResponse> ReviewMatchAsync(ReviewMatchRequest request, string apiKey, string apiSecret)
     {
         var path = "/watchlist/review-match/";
-        var pairs = CloudcheckHelpers
+        var pairs = VerifidentityHelpers
             .CreatePostRequest(request, path, apiKey, apiSecret)
             .ToDictionary()
             .ToLowerCaseKeys();
@@ -114,7 +114,7 @@ public class CloudcheckApiClient : ICloudcheckApiClient
                 return idCheckResponse;
             }
 
-            var exception = new Exception($"Cloudcheck check failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"Verifidentity check failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
             Logger.Error(exception, "An error occurred while sending request for review match.");
 
             throw exception;
@@ -129,7 +129,7 @@ public class CloudcheckApiClient : ICloudcheckApiClient
     public async Task<PeidLookupResponse> LookupPeidAsync(PeidLookupRequest request, string apiKey, string apiSecret)
     {
         var path = "/verify/peid/";
-        var pairs = CloudcheckHelpers
+        var pairs = VerifidentityHelpers
             .CreatePostRequest(request, path, apiKey, apiSecret)
             .ToDictionary()
             .ToLowerCaseKeys();
@@ -156,7 +156,7 @@ public class CloudcheckApiClient : ICloudcheckApiClient
                 return idCheckResponse;
             }
 
-            var exception = new Exception($"Cloudcheck check failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"Verifidentity check failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
             Logger.Error(exception, "An error occurred while sending request for lookup peid.");
             throw exception;
         }
@@ -171,11 +171,11 @@ public class CloudcheckApiClient : ICloudcheckApiClient
     {
         var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
         var response =
-            JsonSerializer.Deserialize<CloudcheckResponse>(responseString, JsonOptions);
+            JsonSerializer.Deserialize<VerifidentityResponse>(responseString, JsonOptions);
 
         if (response is { Verification.Error: { } })
         {
-            var error = new Exception($"Cloudcheck check failed. Response error code: {response.Verification.Error.Value}. Message: '{response.Verification.Message}'.");
+            var error = new Exception($"Verifidentity check failed. Response error code: {response.Verification.Error.Value}. Message: '{response.Verification.Message}'.");
             Logger.Error(error, error.Message);
             throw error;
         }

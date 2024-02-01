@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
+using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
 
-namespace Si.IdCheck.ApiClients.Cloudcheck.Helpers;
-public static class CloudcheckHelpers
+namespace Si.IdCheck.ApiClients.Verifidentity.Helpers;
+public static class VerifidentityHelpers
 {
     public static string CreateNonce()
     {
@@ -53,7 +53,7 @@ public static class CloudcheckHelpers
         return signatureHex.ToString().ToLower();
     }
 
-    public static CloudcheckPostRequestBase CreatePostRequest<T>(T request, string path, string apiKey, string apiSecret)
+    public static CloudCheckPostRequestBase CreatePostRequest<T>(T request, string path, string apiKey, string apiSecret)
         where T : IParameterBuilder, IPostRequestBuilder
     {
         var nonce = CreateNonce();
@@ -69,7 +69,7 @@ public static class CloudcheckHelpers
         return result;
     }
 
-    public static Dictionary<string, string> ToDictionary(this CloudcheckPostRequestBase request)
+    public static Dictionary<string, string> ToDictionary(this CloudCheckPostRequestBase request)
     {
         if (request == null)
         {

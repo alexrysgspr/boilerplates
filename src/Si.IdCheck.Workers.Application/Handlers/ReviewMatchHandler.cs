@@ -1,9 +1,9 @@
 ﻿using Ardalis.Result;
 using MediatR;
 using Microsoft.Extensions.Options;
-using Si.IdCheck.ApiClients.Cloudcheck;
-using Si.IdCheck.ApiClients.Cloudcheck.Constants;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
+using Si.IdCheck.ApiClients.Verifidentity;
+using Si.IdCheck.ApiClients.Verifidentity.Constants;
+using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
 using Si.IdCheck.AzureTableStorage;
 using Si.IdCheck.AzureTableStorage.Models;
 using Si.IdCheck.Workers.Application.Models.Requests;
@@ -12,19 +12,19 @@ using Si.IdCheck.Workers.Application.Settings;
 namespace Si.IdCheck.Workers.Application.Handlers;
 public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 {
-    private readonly ICloudcheckApiClient _client;
-    private readonly CloudcheckSettings _CloudcheckSettings;
+    private readonly IVerifidentityApiClient _client;
+    private readonly VerifidentitySettings _verifidentitySettings;
     private readonly ReviewMatchSettings _reviewMatchSettings;
     private readonly IAzureTableStorageService<ReviewMatchLogEntity> _tableStorageService;
 
     public ReviewMatchHandler(
-        ICloudcheckApiClient client,
+        IVerifidentityApiClient client,
         IAzureTableStorageService<ReviewMatchLogEntity> tableStorageService,
-        IOptions<CloudcheckSettings> CloudcheckSettingsOption,
+        IOptions<VerifidentitySettings> verifidentitySettingsOption,
         IOptions<ReviewMatchSettings> reviewMatchSettingsOptions)
     {
         _client = client;
-        _CloudcheckSettings = CloudcheckSettingsOption.Value;
+        _verifidentitySettings = verifidentitySettingsOption.Value;
         _reviewMatchSettings = reviewMatchSettingsOptions.Value;
         _tableStorageService = tableStorageService;
     }
@@ -37,14 +37,14 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
         var relative = matchFromLookup?
             .Associates?
-            .Where(x => CloudcheckRelationshipConsts.Child.Equals(x.Relationship, StringComparison.InvariantCultureIgnoreCase) || CloudcheckRelationshipConsts.Child.Equals(x.Relationship, StringComparison.InvariantCultureIgnoreCase))
+            .Where(x => VerifidentityRelationshipConsts.Child.Equals(x.Relationship, StringComparison.InvariantCultureIgnoreCase) || VerifidentityRelationshipConsts.Child.Equals(x.Relationship, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
 
         if (relative == null || !relative.Any()) return Result.Success();
 
         if (_reviewMatchSettings.ClearEnabled)
         {
-            var CloudcheckRequest = new ReviewMatchRequest
+            var verifidentityRequest = new ReviewMatchRequest
             {
                 AssociationReference = request.Association.AssociationReference,
                 Review = new Review
@@ -55,8 +55,8 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 }
             };
 
-            var response = await _client.ReviewMatchAsync(CloudcheckRequest, _CloudcheckSettings.ApiKey,
-                _CloudcheckSettings.ApiSecret);
+            var response = await _client.ReviewMatchAsync(verifidentityRequest, _verifidentitySettings.ApiKey,
+                _verifidentitySettings.ApiSecret);
         }
 
         var log = new ReviewMatchLogEntity(request.Association.AssociationReference, request.Match.MatchId, "",

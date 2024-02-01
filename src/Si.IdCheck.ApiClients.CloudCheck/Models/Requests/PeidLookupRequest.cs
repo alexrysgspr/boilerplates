@@ -1,6 +1,6 @@
-﻿namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
+﻿namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
 
-public class PeidLookupRequest : CloudcheckPostRequestBase, IParameterBuilder, IPostRequestBuilder
+public class PeidLookupRequest : CloudCheckPostRequestBase, IParameterBuilder, IPostRequestBuilder
 {
     public int Peid { get; set; }
 
@@ -10,7 +10,7 @@ public class PeidLookupRequest : CloudcheckPostRequestBase, IParameterBuilder, I
         return baseDictionary;
     }
 
-    public CloudcheckPostRequestBase BuildPostRequest(string key, string nonce, string signature, string timestamp)
+    public CloudCheckPostRequestBase BuildPostRequest(string key, string nonce, string signature, string timestamp)
     {
         return new PeidLookupRequest
         {
