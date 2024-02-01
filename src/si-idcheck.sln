@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Integration.Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C754F17E-AE29-46AF-9832-B90664AC3B03}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.Verifidentity", "Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Verifidentity.csproj", "{B96CE83B-FE8C-478D-BC19-585AE15B7128}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.Cloudcheck", "Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Cloudcheck.csproj", "{B96CE83B-FE8C-478D-BC19-585AE15B7128}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Workers.Application", "Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj", "{375A94F5-1377-4A01-8984-BB83172F64A6}"
 EndProject

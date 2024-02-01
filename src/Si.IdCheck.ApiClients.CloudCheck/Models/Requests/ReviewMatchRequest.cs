@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
 
 public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
 {
@@ -32,11 +32,11 @@ public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
         return baseDictionary;
     }
 
-    public CloudCheckPostRequestBase BuildPostRequest(string key, string nonce, string signature, string timestamp)
+    public CloudcheckPostRequestBase BuildPostRequest(string key, string nonce, string signature, string timestamp)
     {
         var data = SerializeToJson();
 
-        return new VerifidentityRequest
+        return new CloudcheckPostRequest
         {
             Data = data,
             Key = key,

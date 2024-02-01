@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
         services
             .AddOptions()
             .AddSingleton<IDateTimeService, DateTimeService>()
-            .AddVerifidentity(configuration)
+            .AddCloudcheck(configuration)
             .AddApplicationDependencies(configuration)
             .AddHostedService<AlertsWorker>()
             .AddConfigurations(configuration)

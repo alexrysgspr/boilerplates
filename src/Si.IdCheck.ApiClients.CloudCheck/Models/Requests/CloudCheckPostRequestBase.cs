@@ -1,6 +1,6 @@
-﻿namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+﻿namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
 
-public abstract class CloudCheckPostRequestBase
+public abstract class CloudcheckPostRequestBase
 {
     public string Key { get; set; }
     public string Nonce { get; set; }
@@ -15,5 +15,5 @@ public interface IParameterBuilder
 
 public interface IPostRequestBuilder
 {
-    public CloudCheckPostRequestBase BuildPostRequest(string key, string nonce, string signature, string timestamp);
+    public CloudcheckPostRequestBase BuildPostRequest(string key, string nonce, string signature, string timestamp);
 }

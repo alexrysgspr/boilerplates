@@ -12,7 +12,7 @@
 		<PackageReference Include="Ardalis.Result.FluentValidation" Version="7.2.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Verifidentity.csproj" />
+	  <ProjectReference Include="..\Si.IdCheck.ApiClients.Cloudcheck\Si.IdCheck.ApiClients.Cloudcheck.csproj" />
 	  <ProjectReference Include="..\Si.IdCheck.TableStorage\Si.IdCheck.AzureTableStorage.csproj" />
 	</ItemGroup>
 
