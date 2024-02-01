@@ -20,9 +20,4 @@
 		<PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	  <Folder Include="Middlewares\" />
-	</ItemGroup>
-
 </Project>
