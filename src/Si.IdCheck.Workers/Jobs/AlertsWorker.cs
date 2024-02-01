@@ -18,17 +18,23 @@ public class AlertsWorker : CronJobWorker
         _serviceScopeFactory = serviceScopeFactory;
     }
 
+    private bool isRunning = true;
+
+
     public override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
         try
         {
+            if (isRunning)
+                return;
+
             using var scope = _serviceScopeFactory.CreateScope();
             var mediator = scope.ServiceProvider.GetService<IMediator>();
 
             var getAssociationsRequest = new GetAssociations();
+            isRunning = true;
 
             var associations = await mediator.Send(getAssociationsRequest, cancellationToken);
-            
             foreach (var association in associations.Value)
             {
                 var associationRequest = new GetAssociation
@@ -37,6 +43,7 @@ public class AlertsWorker : CronJobWorker
                 };
 
                 var associationResult = await mediator.Send(associationRequest, cancellationToken);
+
 
                 foreach (var match in associationResult.Value.Matches)
                 {
@@ -61,6 +68,8 @@ public class AlertsWorker : CronJobWorker
         }
         catch (Exception e)
         {
+            await Task.Delay(3000, cancellationToken);
+            isRunning = false;
             Logger.Error(e, "An error occurred while running AlertsWorker");
         }
     }

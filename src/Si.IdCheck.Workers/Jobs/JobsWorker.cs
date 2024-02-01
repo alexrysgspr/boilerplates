@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Azure;
 using Serilog;
-using Si.IdCheck.ServiceBus;
 using ILogger = Serilog.ILogger;
 
 namespace Si.IdCheck.Workers.Jobs;
@@ -9,22 +9,21 @@ namespace Si.IdCheck.Workers.Jobs;
 public class JobsWorker : BackgroundService
 {
 
-    private CancellationToken _cancellationToken;
     private static readonly ILogger Logger = Log.ForContext<JobsWorker>();
-    private readonly IServiceBusFactory _serviceBusFactory;
     private ServiceBusProcessor _processor;
+    private readonly IAzureClientFactory<ServiceBusClient> _azureClientFactory;
 
-    public JobsWorker(IServiceBusFactory serviceBusFactory)
+    public JobsWorker(IAzureClientFactory<ServiceBusClient> azureClientFactory)
     {
-        _serviceBusFactory = serviceBusFactory;
+        _azureClientFactory = azureClientFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _cancellationToken = stoppingToken;
-
-        //todo:
-        _processor = _serviceBusFactory.CreateProcessor("");
+        //todo: queue name
+        _processor = _azureClientFactory
+            .CreateClient("SwiftId")
+            .CreateProcessor("");
 
         _processor.ProcessMessageAsync += ProcessMessageAsync;
         _processor.ProcessErrorAsync += ProcessErrorAsync;
