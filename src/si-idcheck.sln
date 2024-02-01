@@ -34,11 +34,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Integration.Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C754F17E-AE29-46AF-9832-B90664AC3B03}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.Verifidentity", "Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.Verifidentity.csproj", "{B96CE83B-FE8C-478D-BC19-585AE15B7128}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Workers.Application", "Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj", "{375A94F5-1377-4A01-8984-BB83172F64A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.AzureTableStorage", "Si.IdCheck.TableStorage\Si.IdCheck.AzureTableStorage.csproj", "{4DBEBAB4-4182-46E5-97A7-AC77E6440C72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Si.IdCheck.ApiClients.Cloudcheck", "Shared\Si.IdCheck.ApiClients.Cloudcheck\Si.IdCheck.ApiClients.Cloudcheck.csproj", "{9E05D25E-B5D1-4173-8CF5-F1DF77A34B74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,10 +58,6 @@ Global
 		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B96CE83B-FE8C-478D-BC19-585AE15B7128}.Release|Any CPU.Build.0 = Release|Any CPU
 		{375A94F5-1377-4A01-8984-BB83172F64A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{375A94F5-1377-4A01-8984-BB83172F64A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{375A94F5-1377-4A01-8984-BB83172F64A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -70,6 +66,10 @@ Global
 		{4DBEBAB4-4182-46E5-97A7-AC77E6440C72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DBEBAB4-4182-46E5-97A7-AC77E6440C72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DBEBAB4-4182-46E5-97A7-AC77E6440C72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E05D25E-B5D1-4173-8CF5-F1DF77A34B74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E05D25E-B5D1-4173-8CF5-F1DF77A34B74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E05D25E-B5D1-4173-8CF5-F1DF77A34B74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E05D25E-B5D1-4173-8CF5-F1DF77A34B74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +79,7 @@ Global
 		{5A1C33ED-A3F7-47C4-A3F5-2D2B9975E128} = {EE686AE6-0D37-41D7-BE4B-98386422B8AA}
 		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB} = {C754F17E-AE29-46AF-9832-B90664AC3B03}
 		{4DBEBAB4-4182-46E5-97A7-AC77E6440C72} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
+		{9E05D25E-B5D1-4173-8CF5-F1DF77A34B74} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A85ACA9F-CB9B-4BEB-8A2C-373D8756283E}

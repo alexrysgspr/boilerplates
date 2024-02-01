@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+using Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
 
-namespace Si.IdCheck.ApiClients.Verifidentity.Helpers;
-public static class VerifidentityHelpers
+namespace Si.IdCheck.ApiClients.Cloudcheck.Helpers;
+public static class CloudcheckHelpers
 {
     public static string CreateNonce()
     {

@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+﻿namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
 
 public abstract class CloudCheckPostRequestBase
 {

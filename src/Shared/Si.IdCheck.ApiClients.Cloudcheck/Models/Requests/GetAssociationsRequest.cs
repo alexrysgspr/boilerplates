@@ -1,7 +1,7 @@
 ﻿
-using Si.IdCheck.ApiClients.Verifidentity.Helpers;
+using Si.IdCheck.ApiClients.Cloudcheck.Helpers;
 
-namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
 public class GetAssociationsRequest
 {
     /// <summary>
@@ -26,9 +26,9 @@ public static class GetAssociationRequestExtensions
 {
     public static string ToQueryParams(this GetAssociationsRequest request,  string path, string apiKey, string apiSecret)
     {
-        var nonce = VerifidentityHelpers.CreateNonce();
+        var nonce = CloudcheckHelpers.CreateNonce();
 
-        var timestamp = VerifidentityHelpers.CreateUnixTimestamp();
+        var timestamp = CloudcheckHelpers.CreateUnixTimestamp();
 
         var parameters = new SortedDictionary<string, string>
         {
@@ -41,7 +41,7 @@ public static class GetAssociationRequestExtensions
             ["cursor"] = request.Cursor.ToString()
         };
 
-        var signature = VerifidentityHelpers.CreateSignature(parameters, path, apiSecret);
+        var signature = CloudcheckHelpers.CreateSignature(parameters, path, apiSecret);
 
         return
             $"?key={apiKey}&nonce={nonce}&timestamp={timestamp}&signature={signature}&pageSize={request.PageSize}&filterAlertOnly={request.FilterAlertOnly}&filterIsDeleted={request.FilterIsDeleted}&cursor={request.Cursor}";

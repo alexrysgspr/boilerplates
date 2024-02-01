@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
+namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
 
 public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
 {
@@ -36,7 +36,7 @@ public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
     {
         var data = SerializeToJson();
 
-        return new VerifidentityRequest
+        return new CloudcheckRequest
         {
             Data = data,
             Key = key,
