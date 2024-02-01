@@ -20,6 +20,8 @@ app
 
 try
 {
+    await app.SetupTableStorageServices();
+
     await app.RunAsync();
     return 0;
 }
