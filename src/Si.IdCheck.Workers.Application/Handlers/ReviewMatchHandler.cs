@@ -35,34 +35,77 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         var matchFromLookup =
             request.Peid.Response.Matches.FirstOrDefault(x => x.Peid == request.Match.Peid);
 
-        var relative = matchFromLookup?
-            .Associates?
-            .Where(x => CloudCheckRelationshipConsts.Child.Equals(x.Relationship, StringComparison.InvariantCultureIgnoreCase) || CloudCheckRelationshipConsts.Child.Equals(x.Relationship, StringComparison.InvariantCultureIgnoreCase))
-            .ToList();
+        var isCleared = true;
 
-        if (relative == null || !relative.Any()) return Result.Success();
+        //Check first if it matches any of the relationships to filter.
+        if (matchFromLookup != null)
+        {    
+            var associateRelationships = matchFromLookup
+                .Associates.Select(x => x.Relationship).ToList();
 
-        if (_reviewMatchSettings.ClearEnabled)
-        {
-            var CloudCheckRequest = new ReviewMatchRequest
+            foreach (var relationship in _reviewMatchSettings.RelationshipsToFiltler)
             {
-                AssociationReference = request.Association.AssociationReference,
-                Review = new Review
+                if (associateRelationships.Any(x => relationship.Equals(x, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    Decision = "",
-                    MatchId = request.Match.MatchId,
-                    Notes = ""
+                    isCleared = false;
                 }
-            };
-
-            var response = await _client.ReviewMatchAsync(CloudCheckRequest, _cloudCheckSettings.ApiKey,
-                _cloudCheckSettings.ApiSecret);
+            }
+        }
+        else
+        {
+            return Result.Success();
         }
 
-        var log = new ReviewMatchLogEntity(request.Association.AssociationReference, request.Match.MatchId, "",
-            _reviewMatchSettings.ClearEnabled);
+        var childRelationshipTypes = new[]
+        {
+            CloudCheckRelationshipConsts.Son,
+            CloudCheckRelationshipConsts.Daughter
+        };
 
-        await _tableStorageService.InsertAsync(log, cancellationToken);
+        if (!isCleared)
+        {
+            //Add condition to check if it's a child but age doesn't match, then set isCleared to true.
+            var children = matchFromLookup
+                .Associates
+                .Where(x => childRelationshipTypes.Contains(x.Relationship, StringComparer.CurrentCultureIgnoreCase))
+                .ToList();
+
+            var hasChildIssue = false;
+
+            foreach (var child in children)
+            {
+                //Looks like we need an extra call to lookup peid to check their birthdate.
+                if (true)
+                {
+                    hasChildIssue = true;
+                }
+            }
+
+            if (!hasChildIssue)
+            {
+                if (_reviewMatchSettings.ClearEnabled)
+                {
+                    var cloudCheckRequest = new ReviewMatchRequest
+                    {
+                        AssociationReference = request.Association.AssociationReference,
+                        Review = new Review
+                        {
+                            Decision = CloudCheckDecisionConsts.Cleared,
+                            MatchId = request.Match.MatchId,
+                            Notes = ""
+                        }
+                    };
+
+                    var response = await _client.ReviewMatchAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
+                        _cloudCheckSettings.ApiSecret);
+                }
+
+                var log = new ReviewMatchLogEntity(request.Association.AssociationReference, request.Match.MatchId, "",
+                    _reviewMatchSettings.ClearEnabled);
+
+                await _tableStorageService.InsertAsync(log, cancellationToken);
+            }
+        }
 
         return Result.Success();
     }
