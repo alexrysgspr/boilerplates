@@ -1,23 +1,23 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Polly;
-using Si.IdCheck.ApiClients.Cloudcheck;
 
 // ReSharper disable CheckNamespace
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Si.IdCheck.ApiClients.CloudCheck.Extensions;
 // ReSharper restore CheckNamespace
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCloudcheck(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCloudCheck(this IServiceCollection services, IConfiguration configuration)
     {
-        var settings = configuration.GetSection(nameof(CloudcheckSettings));
-        services.Configure<CloudcheckSettings>(settings);
+        var settings = configuration.GetSection(nameof(CloudCheckSettings));
+        services.Configure<CloudCheckSettings>(settings);
 
         services
-            .AddHttpClient<ICloudcheckApiClient, CloudcheckApiClient>(client =>
+            .AddHttpClient<ICloudCheckApiClient, CloudCheckApiClient>(client =>
         {
-            client.BaseAddress = new Uri(settings.Get<CloudcheckSettings>().BaseUrl);
+            client.BaseAddress = new Uri(settings.Get<CloudCheckSettings>().BaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));

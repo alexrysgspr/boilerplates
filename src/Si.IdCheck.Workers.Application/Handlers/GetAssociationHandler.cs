@@ -1,34 +1,34 @@
 ﻿using Ardalis.Result;
 using MediatR;
 using Microsoft.Extensions.Options;
-using Si.IdCheck.ApiClients.Cloudcheck;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheck;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
 
 namespace Si.IdCheck.Workers.Application.Handlers;
 public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetAssociationResponse>>
 {
-    private readonly ICloudcheckApiClient _client;
-    private readonly CloudcheckSettings _CloudcheckSettings;
+    private readonly ICloudCheckApiClient _client;
+    private readonly CloudCheckSettings _cloudCheckSettings;
 
     public GetAssociationHandler(
-        ICloudcheckApiClient client,
-        IOptions<CloudcheckSettings> CloudcheckSettingsOption)
+        ICloudCheckApiClient client,
+        IOptions<CloudCheckSettings> cloudCheckSettingsOption)
     {
         _client = client;
-        _CloudcheckSettings = CloudcheckSettingsOption.Value;
+        _cloudCheckSettings = cloudCheckSettingsOption.Value;
     }
 
     public async Task<Result<GetAssociationResponse>> Handle(GetAssociation request, CancellationToken cancellationToken)
     {
-        var CloudcheckRequest = new GetAssociationRequest
+        var CloudCheckRequest = new GetAssociationRequest
         {
             AssociationReference = request.AssociationReference
         };
 
-        var association = await _client.GetAssociationAsync(CloudcheckRequest, _CloudcheckSettings.ApiKey,
-            _CloudcheckSettings.ApiSecret);
+        var association = await _client.GetAssociationAsync(CloudCheckRequest, _cloudCheckSettings.ApiKey,
+            _cloudCheckSettings.ApiSecret);
 
         association.Matches = association
             .Matches

@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Si.IdCheck.ApiClients.Cloudcheck\Si.IdCheck.ApiClients.Cloudcheck.csproj" />
+    <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.CloudCheck.csproj" />
   </ItemGroup>
 
 </Project>

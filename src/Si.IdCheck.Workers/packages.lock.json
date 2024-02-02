@@ -1664,7 +1664,7 @@
           "Ardalis.Result": "[7.2.0, )",
           "Ardalis.Result.FluentValidation": "[7.2.0, )",
           "MediatR": "[12.2.0, )",
-          "Si.IdCheck.ApiClients.Cloudcheck": "[1.0.0, )",
+          "Si.IdCheck.ApiClients.CloudCheck": "[1.0.0, )",
           "Si.IdCheck.AzureTableStorage": "[1.0.0, )"
         }
       }

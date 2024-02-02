@@ -1,7 +1,7 @@
-﻿using System.Text.Json.Serialization;
-using System.Text.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
+namespace Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 
 public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
 {
@@ -36,7 +36,7 @@ public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
     {
         var data = SerializeToJson();
 
-        return new CloudcheckRequest
+        return new CloudCheckRequest
         {
             Data = data,
             Key = key,
@@ -50,7 +50,7 @@ public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
 public class Review
 {
     /// <summary>
-    /// The matchId is the unique identifier for a match within Cloudcheck.
+    /// The matchId is the unique identifier for a match within CloudCheck.
     /// </summary>
     public string MatchId { get; set; }
     public string Decision { get; set; }

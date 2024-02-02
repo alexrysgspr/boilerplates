@@ -1,5 +1,5 @@
-﻿namespace Si.IdCheck.ApiClients.Cloudcheck;
-public class CloudcheckSettings
+﻿namespace Si.IdCheck.ApiClients.CloudCheck;
+public class CloudCheckSettings
 {
     public string ApiKey { get; set; }
     public string ApiSecret { get; set; }

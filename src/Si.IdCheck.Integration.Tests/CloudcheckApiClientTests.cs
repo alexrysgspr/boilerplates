@@ -1,15 +1,15 @@
-using Si.IdCheck.ApiClients.Cloudcheck;
-using Si.IdCheck.ApiClients.Cloudcheck.Constants;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheck;
+using Si.IdCheck.ApiClients.CloudCheck.Constants;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 
 namespace Si.IdCheck.Integration.Tests;
 
 [TestClass]
-public class CloudcheckApiClientTests
+public class CloudCheckApiClientTests
 {
-    private CloudcheckApiClient _client;
-    private CloudcheckSettings _settings;
+    private CloudCheckApiClient _client;
+    private CloudCheckSettings _settings;
     public TestContext TestContext { get; set; }
 
 
@@ -73,7 +73,7 @@ public class CloudcheckApiClientTests
             AssociationReference = "b660742a-55fd-4594-8169-0c7a224666b1",
             Review = new Review
             {
-                Decision = CloudcheckDecisionConsts.Cleared,
+                Decision = CloudCheckDecisionConsts.Cleared,
                 MatchId = "5a176003033ed23ee22269cdaa293982c5443e7bc1f30ec88622e73d2d6ab113",
                 Notes = "Not our client"
             }
@@ -95,11 +95,11 @@ public class CloudcheckApiClientTests
 
     private void InitializeTest()
     {
-        _settings = new CloudcheckSettings
+        _settings = new CloudCheckSettings
         {
-            ApiKey = TestContext.Properties["CloudcheckSettings:ApiKey"].ToString(),
-            ApiSecret = TestContext.Properties["CloudcheckSettings:ApiSecret"].ToString(),
-            BaseUrl = TestContext.Properties["CloudcheckSettings:BaseUrl"].ToString(),
+            ApiKey = TestContext.Properties["CloudCheckSettings:ApiKey"].ToString(),
+            ApiSecret = TestContext.Properties["CloudCheckSettings:ApiSecret"].ToString(),
+            BaseUrl = TestContext.Properties["CloudCheckSettings:BaseUrl"].ToString(),
         };
 
 
@@ -108,6 +108,6 @@ public class CloudcheckApiClientTests
             BaseAddress = new Uri(_settings.BaseUrl)
         };
 
-        _client = new CloudcheckApiClient(httpClient);
+        _client = new CloudCheckApiClient(httpClient);
     }
 }

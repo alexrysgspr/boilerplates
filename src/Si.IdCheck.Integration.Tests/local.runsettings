@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <RunSettings>
 	<TestRunParameters>
-		<Parameter name="CloudcheckSettings:ApiKey" value="" />
-		<Parameter name="CloudcheckSettings:ApiSecret" value="" />
-		<Parameter name="CloudcheckSettings:BaseUrl" value="https://api.cloudcheck.co.nz" />
+		<Parameter name="CloudCheckSettings:ApiKey" value="" />
+		<Parameter name="CloudCheckSettings:ApiSecret" value="" />
+		<Parameter name="CloudCheckSettings:BaseUrl" value="https://api.cloudcheck.co.nz" />
 	</TestRunParameters>
 </RunSettings>

@@ -1,10 +1,10 @@
-﻿using Si.IdCheck.ApiClients.Cloudcheck.Helpers;
+﻿using Si.IdCheck.ApiClients.CloudCheck.Helpers;
 
-namespace Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
+namespace Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 public class GetAssociationRequest
 {
     /// <summary>
-    /// Unique Cloudcheck identifier for an association.
+    /// Unique CloudCheck identifier for an association.
     /// </summary>
     public string AssociationReference { get; set; }
 }
@@ -13,9 +13,9 @@ public static class GetAssociationsRequestExtensions
 {
     public static string ToQueryParams(this GetAssociationRequest request, string path, string apiKey, string apiSecret)
     {
-        var nonce = CloudcheckHelpers.CreateNonce();
+        var nonce = CloudCheckHelpers.CreateNonce();
 
-        var timestamp = CloudcheckHelpers.CreateUnixTimestamp();
+        var timestamp = CloudCheckHelpers.CreateUnixTimestamp();
 
         var parameters = new SortedDictionary<string, string>
         {
@@ -25,7 +25,7 @@ public static class GetAssociationsRequestExtensions
             ["associationReference"] = request.AssociationReference
         };
 
-        var signature = CloudcheckHelpers.CreateSignature(parameters, path, apiSecret);
+        var signature = CloudCheckHelpers.CreateSignature(parameters, path, apiSecret);
 
         return
             $"?key={apiKey}&nonce={nonce}&timestamp={timestamp}&signature={signature}&associationReference={request.AssociationReference}";

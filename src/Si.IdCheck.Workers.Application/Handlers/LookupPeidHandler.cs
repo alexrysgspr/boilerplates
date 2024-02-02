@@ -1,35 +1,35 @@
 ﻿using Ardalis.Result;
 using MediatR;
 using Microsoft.Extensions.Options;
-using Si.IdCheck.ApiClients.Cloudcheck;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Requests;
-using Si.IdCheck.ApiClients.Cloudcheck.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheck;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
 
 namespace Si.IdCheck.Workers.Application.Handlers;
 public class LookupPeidHandler : IRequestHandler<LookupPeid, Result<PeidLookupResponse>>
 {
-    private readonly ICloudcheckApiClient _client;
-    private readonly CloudcheckSettings _CloudcheckSettings;
+    private readonly ICloudCheckApiClient _client;
+    private readonly CloudCheckSettings _cloudCheckSettings;
 
     public LookupPeidHandler(
-        ICloudcheckApiClient client,
-        IOptions<CloudcheckSettings> CloudcheckSettingsOption)
+        ICloudCheckApiClient client,
+        IOptions<CloudCheckSettings> CloudCheckSettingsOption)
     {
         _client = client;
-        _CloudcheckSettings = CloudcheckSettingsOption.Value;
+        _cloudCheckSettings = CloudCheckSettingsOption.Value;
     }
 
     public async Task<Result<PeidLookupResponse>> Handle(LookupPeid request, CancellationToken cancellationToken)
     {
 
-        var CloudcheckRequest = new PeidLookupRequest
+        var CloudCheckRequest = new PeidLookupRequest
         {
             Peid = request.Peid
         };
 
-        var peid = await _client.LookupPeidAsync(CloudcheckRequest, _CloudcheckSettings.ApiKey,
-            _CloudcheckSettings.ApiSecret);
+        var peid = await _client.LookupPeidAsync(CloudCheckRequest, _cloudCheckSettings.ApiKey,
+            _cloudCheckSettings.ApiSecret);
 
         return Result.Success(peid);
     }

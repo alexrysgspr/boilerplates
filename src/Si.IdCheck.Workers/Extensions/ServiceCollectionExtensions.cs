@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Azure;
+using Si.IdCheck.ApiClients.CloudCheck.Extensions;
 using Si.IdCheck.Workers.HealthChecks;
 using Si.IdCheck.Workers.Jobs;
 using Si.IdCheck.Workers.Services;
@@ -15,7 +16,7 @@ public static class ServiceCollectionExtensions
         services
             .AddOptions()
             .AddSingleton<IDateTimeService, DateTimeService>()
-            .AddCloudcheck(configuration)
+            .AddCloudCheck(configuration)
             .AddApplicationDependencies(configuration)
             .AddHostedService<AlertsWorker>()
             .AddConfigurations(configuration)
