@@ -1,5 +1,5 @@
-﻿namespace Si.IdCheck.ApiClients.Verifidentity.Constants;
-public enum VerifidentityErrorCodeEnum
+﻿namespace Si.IdCheck.ApiClients.CloudCheck.Constants;
+public enum CloudCheckErrorCodeEnum
 {
     AccessKeyMissingOrIncorrect = 101,
 

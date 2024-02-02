@@ -1,5 +1,5 @@
-﻿namespace Si.IdCheck.ApiClients.Verifidentity.Constants;
-public static class VerifidentityRelationshipConsts
+﻿namespace Si.IdCheck.ApiClients.CloudCheck.Constants;
+public static class CloudCheckRelationshipConsts
 {
     public const string Wife = "WIFE";
     public const string Husband = "HUSBAND";

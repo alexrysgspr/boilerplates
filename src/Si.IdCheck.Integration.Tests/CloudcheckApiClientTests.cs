@@ -1,15 +1,15 @@
-using Si.IdCheck.ApiClients.Verifidentity;
-using Si.IdCheck.ApiClients.Verifidentity.Constants;
-using Si.IdCheck.ApiClients.Verifidentity.Models.Requests;
-using Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheck;
+using Si.IdCheck.ApiClients.CloudCheck.Constants;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 
 namespace Si.IdCheck.Integration.Tests;
 
 [TestClass]
-public class VerifidentityApiClientTests
+public class CloudCheckApiClientTests
 {
-    private VerifidentityApiClient _client;
-    private VerifidentitySettings _settings;
+    private CloudCheckApiClient _client;
+    private CloudCheckSettings _settings;
     public TestContext TestContext { get; set; }
 
 
@@ -70,11 +70,11 @@ public class VerifidentityApiClientTests
     {
         var request = new ReviewMatchRequest
         {
-            AssociationReference = "113f6ed3-78af-417a-a0c9-c441d013752c",
+            AssociationReference = "b660742a-55fd-4594-8169-0c7a224666b1",
             Review = new Review
             {
-                Decision = VerifidentityDecisionConsts.Cleared,
-                MatchId = "2dfdf7ba113f6ed3-78af-417a-a0c9-c441d013752c",
+                Decision = CloudCheckDecisionConsts.Cleared,
+                MatchId = "5a176003033ed23ee22269cdaa293982c5443e7bc1f30ec88622e73d2d6ab113",
                 Notes = "Not our client"
             }
         };
@@ -95,11 +95,11 @@ public class VerifidentityApiClientTests
 
     private void InitializeTest()
     {
-        _settings = new VerifidentitySettings
+        _settings = new CloudCheckSettings
         {
-            ApiKey = TestContext.Properties["VerifidentitySettings:ApiKey"].ToString(),
-            ApiSecret = TestContext.Properties["VerifidentitySettings:ApiSecret"].ToString(),
-            BaseUrl = TestContext.Properties["VerifidentitySettings:BaseUrl"].ToString(),
+            ApiKey = TestContext.Properties["CloudCheckSettings:ApiKey"].ToString(),
+            ApiSecret = TestContext.Properties["CloudCheckSettings:ApiSecret"].ToString(),
+            BaseUrl = TestContext.Properties["CloudCheckSettings:BaseUrl"].ToString(),
         };
 
 
@@ -108,6 +108,6 @@ public class VerifidentityApiClientTests
             BaseAddress = new Uri(_settings.BaseUrl)
         };
 
-        _client = new VerifidentityApiClient(httpClient);
+        _client = new CloudCheckApiClient(httpClient);
     }
 }

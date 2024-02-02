@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.Verifidentity.Models.Responses;
+﻿namespace Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 
 public class GetAssociationResponse
 {

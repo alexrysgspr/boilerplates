@@ -1,5 +1,5 @@
-﻿namespace Si.IdCheck.ApiClients.Verifidentity.Constants;
-public static class VerifidentityDecisionConsts
+﻿namespace Si.IdCheck.ApiClients.CloudCheck.Constants;
+public static class CloudCheckDecisionConsts
 {
     /// <summary>
     /// Indicates that this match is not considered as a risk, but you want to be alerted if changes to the matched profile occur later.

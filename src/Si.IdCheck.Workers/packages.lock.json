@@ -1638,7 +1638,7 @@
           "System.Xml.XmlDocument": "4.0.1"
         }
       },
-      "si.idcheck.apiclients.verifidentity": {
+      "si.idcheck.apiclients.cloudcheck": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Abstractions": "[8.0.0, )",
@@ -1664,7 +1664,7 @@
           "Ardalis.Result": "[7.2.0, )",
           "Ardalis.Result.FluentValidation": "[7.2.0, )",
           "MediatR": "[12.2.0, )",
-          "Si.IdCheck.ApiClients.Verifidentity": "[1.0.0, )",
+          "Si.IdCheck.ApiClients.CloudCheck": "[1.0.0, )",
           "Si.IdCheck.AzureTableStorage": "[1.0.0, )"
         }
       }
