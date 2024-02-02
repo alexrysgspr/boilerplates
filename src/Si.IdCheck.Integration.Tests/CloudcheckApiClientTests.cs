@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.ApiClients.CloudCheck.Constants;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
@@ -85,12 +86,22 @@ public class CloudCheckApiClientTests
     [TestMethod]
     public async Task Peid_Lookup_Test()
     {
-        var request = new PeidLookupRequest
+        var peids = new[]
         {
-            Peid = 13231726
+            12292109,
+            12389477,
+            13231726
         };
 
-        var response = await _client.LookupPeidAsync(request, _settings.ApiKey, _settings.ApiSecret);
+        foreach (var peid in peids)
+        {
+            var request = new PeidLookupRequest
+            {
+                Peid = peid
+            };
+
+            var response = await _client.LookupPeidAsync(request, _settings.ApiKey, _settings.ApiSecret);
+        }
     }
 
     private void InitializeTest()

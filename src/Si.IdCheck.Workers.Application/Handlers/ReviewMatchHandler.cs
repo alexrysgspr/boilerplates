@@ -20,11 +20,11 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
     public ReviewMatchHandler(
         ICloudCheckApiClient client,
         IAzureTableStorageService<ReviewMatchLogEntity> tableStorageService,
-        IOptions<CloudCheckSettings> CloudCheckSettingsOption,
+        IOptions<CloudCheckSettings> cloudCheckSettingsOption,
         IOptions<ReviewMatchSettings> reviewMatchSettingsOptions)
     {
         _client = client;
-        _cloudCheckSettings = CloudCheckSettingsOption.Value;
+        _cloudCheckSettings = cloudCheckSettingsOption.Value;
         _reviewMatchSettings = reviewMatchSettingsOptions.Value;
         _tableStorageService = tableStorageService;
     }
@@ -34,7 +34,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         //todo: Rules for clearing matches;
         //Check first if it matches any of the relationships to filter.
         //If associate is empty, it means we filtered the relationships and it didn't return any result, so can clear it now.
-        if (request.Associates.Any())
+        if (!request.Associates.Any())
         {
             if (_reviewMatchSettings.ClearEnabled)
             {
@@ -69,8 +69,6 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         };
 
         
-        //Add condition to check if it's a child but age doesn't match
-        //Todo: Which birthdate should we compare to?
         var children = request
             .MatchDetails
             .Associates
@@ -83,9 +81,12 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
         foreach (var child in children)
         {
+            //Add condition to check if it's a child but age doesn't match
+            //Todo: Which properties for the birthdate should we compare to?
             if (true)
             {
                 hasChildIssue = true;
+                break;
             }
         }
 

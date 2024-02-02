@@ -16,11 +16,11 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
 
     public GetAssociationsHandler(
         ICloudCheckApiClient client,
-        IOptions<CloudCheckSettings> CloudCheckSettingsOption,
+        IOptions<CloudCheckSettings> cloudCheckSettingsOption,
         IOptions<GetAssociationsSettings> getAssociationsSettingsOption)
     {
         _client = client;
-        _cloudCheckSettings = CloudCheckSettingsOption.Value;
+        _cloudCheckSettings = cloudCheckSettingsOption.Value;
         _getAssociationsSettings = getAssociationsSettingsOption.Value;
     }
 

@@ -28,6 +28,8 @@ public class GetMatchAssociatesPeidDetailsHandler : IRequestHandler<GetMatchAsso
     {
         var results = new List<PeidLookupResponse>();
 
+        if (request.Associates == null!) return Result.Success(results);
+
         foreach (var associate in request.Associates)
         {
             if (!_reviewMatchSettingsOption.RelationshipsToFiltler.Contains(associate.Relationship))
