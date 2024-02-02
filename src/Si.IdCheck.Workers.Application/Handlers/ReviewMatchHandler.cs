@@ -44,7 +44,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
         if (_reviewMatchSettings.ClearEnabled)
         {
-            var CloudCheckRequest = new ReviewMatchRequest
+            var cloudCheckRequest = new ReviewMatchRequest
             {
                 AssociationReference = request.Association.AssociationReference,
                 Review = new Review
@@ -55,7 +55,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 }
             };
 
-            var response = await _client.ReviewMatchAsync(CloudCheckRequest, _cloudCheckSettings.ApiKey,
+            var response = await _client.ReviewMatchAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
                 _cloudCheckSettings.ApiSecret);
         }
 

@@ -26,7 +26,7 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
 
     public async Task<Result<List<Association>>> Handle(GetAssociations request, CancellationToken cancellationToken)
     {
-        var CloudCheckRequest = new GetAssociationsRequest
+        var cloudCheckRequest = new GetAssociationsRequest
         {
             Cursor = 0,
             FilterAlertOnly = _getAssociationsSettings.FilterAlertOnly,
@@ -39,13 +39,13 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
 
         while (!isLastPage)
         {
-            var response = await _client.GetAssociationsAsync(CloudCheckRequest, _cloudCheckSettings.ApiKey, _cloudCheckSettings.ApiSecret);
+            var response = await _client.GetAssociationsAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey, _cloudCheckSettings.ApiSecret);
 
             associations.AddRange(response.Associations);
 
             if (int.TryParse(response.Meta.NextCursor, out var next))
             {
-                CloudCheckRequest.Cursor = next;
+                cloudCheckRequest.Cursor = next;
             }
             else
             {

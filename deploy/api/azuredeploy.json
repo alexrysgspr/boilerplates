@@ -17,6 +17,9 @@
     "webAppName": {
       "type": "string"
     },
+    "customDomainName": {
+      "type": "string"
+    },
     "webApplinuxFxVersion": {
       "type": "string",
       "defaultValue": "DOTNETCORE|8.0"
@@ -196,10 +199,7 @@
                 "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]"
               ],
               "properties": {
-                "SiActivityTrackingStorageAccount": {
-                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-                  "type": "Custom"
-                }
+                
               }
             },
             {
@@ -208,14 +208,12 @@
               "type": "config",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]",
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
               ],
               "properties": {
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
                 "ApplicationInsights__InstrumentationKey": "[reference(concat('Microsoft.Insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
                 "ASPNETCORE_ENVIRONMENT": "[parameters('ASPNETCORE_ENVIRONMENT')]",
-                "IdentitySettings__BaseUrl": "[parameters('authUrl')]",
                 "AppSettings__KeyVaultUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).VaultUri]",
                 "AppSettings__Environment": "[parameters('ASPNETCORE_ENVIRONMENT')]",
                 "LogSettings__LogEventLevel": "Information",

@@ -23,12 +23,12 @@ public class LookupPeidHandler : IRequestHandler<LookupPeid, Result<PeidLookupRe
     public async Task<Result<PeidLookupResponse>> Handle(LookupPeid request, CancellationToken cancellationToken)
     {
 
-        var CloudCheckRequest = new PeidLookupRequest
+        var cloudCheckRequest = new PeidLookupRequest
         {
             Peid = request.Peid
         };
 
-        var peid = await _client.LookupPeidAsync(CloudCheckRequest, _cloudCheckSettings.ApiKey,
+        var peid = await _client.LookupPeidAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
             _cloudCheckSettings.ApiSecret);
 
         return Result.Success(peid);
