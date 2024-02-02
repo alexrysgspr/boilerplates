@@ -22,12 +22,12 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
 
     public async Task<Result<GetAssociationResponse>> Handle(GetAssociation request, CancellationToken cancellationToken)
     {
-        var CloudCheckRequest = new GetAssociationRequest
+        var cloudCheckRequest = new GetAssociationRequest
         {
             AssociationReference = request.AssociationReference
         };
 
-        var association = await _client.GetAssociationAsync(CloudCheckRequest, _cloudCheckSettings.ApiKey,
+        var association = await _client.GetAssociationAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
             _cloudCheckSettings.ApiSecret);
 
         association.Matches = association

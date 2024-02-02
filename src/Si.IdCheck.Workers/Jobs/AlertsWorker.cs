@@ -18,7 +18,7 @@ public class AlertsWorker : CronJobWorker
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    private bool isRunning = true;
+    private bool isRunning;
 
 
     public override async Task DoWorkAsync(CancellationToken cancellationToken)
@@ -47,21 +47,34 @@ public class AlertsWorker : CronJobWorker
 
                 foreach (var match in associationResult.Value.Matches)
                 {
-                    var lookupPeidRequest = new LookupPeid
+                    var lookupPeidRequest = new GetPeidDetails
                     {
                         Peid = match.Peid
                     };
 
-                    var lookupPeidResult = await mediator.Send(lookupPeidRequest, cancellationToken);
+                    var matchPeidResult = await mediator.Send(lookupPeidRequest, cancellationToken);
 
-                    var reviewMatchRequest = new ReviewMatch
+                    foreach (var matchPeid in matchPeidResult.Value.Response.Matches)
                     {
-                        Association = associationResult.Value,
-                        Peid = lookupPeidResult,
-                        Match = match
-                    };
+                        var matchAssociatesPeidDetailsRequest = new GetMatchAssociatesPeidDetailsRequest
+                        {
+                            Associates = matchPeid.Associates
+                        };
 
-                    await mediator.Send(reviewMatchRequest, cancellationToken);
+                        var associatePeidDetailsResult = await mediator.Send(matchAssociatesPeidDetailsRequest, cancellationToken);
+
+                        var reviewMatchRequest = new ReviewMatch
+                        {
+                            AssociationReference = association.AssociationReference,
+                            Associates = associatePeidDetailsResult,
+                            Match = match,
+                            MatchDetails = matchPeid
+                        };
+
+                        await mediator.Send(reviewMatchRequest, cancellationToken);
+                    }
+
+
                 }
             }
 
