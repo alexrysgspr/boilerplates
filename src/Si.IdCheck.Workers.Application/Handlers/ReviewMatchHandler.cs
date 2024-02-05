@@ -46,22 +46,16 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         var associatesDetails = request
             .MatchAssociates
             .SelectMany(x => x.Response.Matches)
-            .Select(x => new
-            {
-                x.Peid, 
-                x.Details, 
-                DateOfBirth = x.Dates.FirstOrDefault(y => dobType.Equals(y.Type, StringComparison.InvariantCultureIgnoreCase))
-            })
+            .Select(x => x)
             .ToList();
 
 
         var associates = request.MatchDetails.Associates
-            .Join(associatesDetails, details => details.Peid, associate => associate.Peid, (associate, associateDetails) => new
+            .Join(associatesDetails, details => details.Peid, associate => associate.Peid, (associateDetails, associate) => new
             {
                 associateDetails.Peid,
-                associateDetails.Details,
-                associate.Relationship,
-                DateOfBirthYear = associateDetails.DateOfBirth?.Year
+                associateDetails.Relationship,
+                DateOfBirthYear = associate.Dates.FirstOrDefault(x => dobType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))?.Year
             })
             .ToList();
             
@@ -76,32 +70,36 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 break;
             }
 
-            if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship) || CloudCheckRelationshipConsts.Father.Equals(associate.Relationship))
+            if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) 
+                || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
                 if (associate.DateOfBirthYear == null) continue;
 
-                var associateDateOfBirthYear = int.Parse(associate.DateOfBirthYear);
+                var parentBirthYear = int.Parse(associate.DateOfBirthYear);
 
                 //Condition to check if it's a parent but birth year is lesser than person of interest's birth year
                 //if true exit loop.
-                if (associateDateOfBirthYear <= personOfInterestBirthYear) continue;
-
-                hasIssue = true;
-                break;
+                if (parentBirthYear <= personOfInterestBirthYear)
+                {
+                    hasIssue = true;
+                    break;
+                }
             }
 
-            if (CloudCheckRelationshipConsts.Son.Equals(associate.Relationship) || CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship))
+            if (CloudCheckRelationshipConsts.Son.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) || 
+                CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
                 if (associate.DateOfBirthYear == null) continue;
 
-                var associateDateOfBirthYear = int.Parse(associate.DateOfBirthYear);
+                var childBirthYear = int.Parse(associate.DateOfBirthYear);
 
                 //Condition to check if it's a child but birth year is lesser than person of interest's birth year
                 //if true exit loop.
-                if (associateDateOfBirthYear >= personOfInterestBirthYear) continue;
-
-                hasIssue = true;
-                break;
+                if (childBirthYear >= personOfInterestBirthYear)
+                {
+                    hasIssue = true;
+                    break;
+                }
             }
         }
 
