@@ -58,7 +58,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 DateOfBirthYear = associate.Dates.FirstOrDefault(x => dobType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))?.Year
             })
             .ToList();
-            
+
         var personOfInterestBirthYear = int.Parse(request.PersonOfInterest.PersonDetail.BirthYear);
         var hasIssue = false;
 
@@ -70,36 +70,25 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 break;
             }
 
-            if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) 
+            if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
                 || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (associate.DateOfBirthYear == null) continue;
+                if (!int.TryParse(associate.DateOfBirthYear, out var parentBirthYear) ||
+                    parentBirthYear >= personOfInterestBirthYear) continue;
 
-                var parentBirthYear = int.Parse(associate.DateOfBirthYear);
-
-                //Condition to check if it's a parent but birth year is lesser than person of interest's birth year
-                //if true exit loop.
-                if (parentBirthYear <= personOfInterestBirthYear)
-                {
-                    hasIssue = true;
-                    break;
-                }
+                hasIssue = true;
+                break;
             }
 
-            if (CloudCheckRelationshipConsts.Son.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) || 
+            if (CloudCheckRelationshipConsts.Son.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) ||
                 CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (associate.DateOfBirthYear == null) continue;
-
-                var childBirthYear = int.Parse(associate.DateOfBirthYear);
-
                 //Condition to check if it's a child but birth year is lesser than person of interest's birth year
-                //if true exit loop.
-                if (childBirthYear >= personOfInterestBirthYear)
-                {
-                    hasIssue = true;
-                    break;
-                }
+                if (!int.TryParse(associate.DateOfBirthYear, out var childBirthYear) ||
+                    childBirthYear <= personOfInterestBirthYear) continue;
+
+                hasIssue = true;
+                break;
             }
         }
 
