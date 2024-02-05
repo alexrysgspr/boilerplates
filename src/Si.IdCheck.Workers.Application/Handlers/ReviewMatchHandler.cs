@@ -39,6 +39,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             await ReviewMatchAsync(request, "No family member in relationship filter found.", cancellationToken);
         }
 
+        //Check relationships and join the persondetails in the match associates.
         var childRelationshipTypes = new[]
         {
             CloudCheckRelationshipConsts.Son,
@@ -64,6 +65,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                     .Dates
                     .FirstOrDefault(x =>
                         "Date of Birth".Equals(x.Type, StringComparison.InvariantCultureIgnoreCase));
+
 
                 if (dateOfBirth == null) continue;
 
