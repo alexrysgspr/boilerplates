@@ -33,58 +33,45 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
     {
         //todo: Rules for clearing matches;
         //Check first if it matches any of the relationships to filter.
-        //If associate is empty, it means we filtered the relationships and it didn't return any result, so can clear it now.
+        //If associate is empty, it means we filtered the relationships and it didn't return any result, so we can clear it now.
         if (!request.Associates.Any())
         {
-            if (_reviewMatchSettings.ClearEnabled)
-            {
-                var cloudCheckRequest = new ReviewMatchRequest
-                {
-                    AssociationReference = request.AssociationReference,
-                    Review = new Review
-                    {
-                        Decision = CloudCheckDecisionConsts.Cleared,
-                        MatchId = request.Match.MatchId,
-                        Notes = ""
-                    }
-                };
-
-                await _client.ReviewMatchAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
-                    _cloudCheckSettings.ApiSecret);
-            }
-
-            var log = new ReviewMatchLogEntity(request.AssociationReference, request.Match.MatchId, "",
-                _reviewMatchSettings.ClearEnabled);
-
-            await _tableStorageService.InsertAsync(log, cancellationToken);
-
-            return Result.Success();
+            await ReviewMatchAsync(request, "No family member in relationship filter found.", cancellationToken);
         }
-        
 
         var childRelationshipTypes = new[]
         {
             CloudCheckRelationshipConsts.Son,
             CloudCheckRelationshipConsts.Daughter
         };
-
-        
-        var children = request
-            .MatchDetails
-            .Associates
-            .Select(x => new { x, x.Relationship })
-            .Where(x => childRelationshipTypes.Contains(x.Relationship))
-            .Select(x => x.x)
-            .ToList();
             
         var hasChildIssue = false;
 
-        foreach (var child in children)
+
+        var personBirthYear = int.Parse(request.Association.PersonDetail.BirthYear);
+
+        foreach (var associate in request.Associates)
         {
-            //Add condition to check if it's a child but age doesn't match
-            //Todo: Which properties for the birthdate should we compare to?
-            if (true)
+            //if true exit loop.
+            if (hasChildIssue)
             {
+                break;
+            }
+
+            foreach (var match in associate.Response.Matches)
+            {
+                var dateOfBirth = match
+                    .Dates
+                    .FirstOrDefault(x =>
+                        "Date of Birth".Equals(x.Type, StringComparison.InvariantCultureIgnoreCase));
+
+                if (dateOfBirth == null) continue;
+
+                var childDateOfBirthYear = int.Parse(dateOfBirth.Year);
+
+                //Condition to check if it's a child but age doesn't match
+                //if true exit loop.
+                if (childDateOfBirthYear >= personBirthYear) continue;
                 hasChildIssue = true;
                 break;
             }
@@ -92,29 +79,36 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
         if (!hasChildIssue)
         {
-            if (_reviewMatchSettings.ClearEnabled)
-            {
-                var cloudCheckRequest = new ReviewMatchRequest
-                {
-                    AssociationReference = request.AssociationReference,
-                    Review = new Review
-                    {
-                        Decision = CloudCheckDecisionConsts.Cleared,
-                        MatchId = request.Match.MatchId,
-                        Notes = ""
-                    }
-                };
-
-                var response = await _client.ReviewMatchAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
-                    _cloudCheckSettings.ApiSecret);
-            }
-
-            var log = new ReviewMatchLogEntity(request.AssociationReference, request.Match.MatchId, "",
-                _reviewMatchSettings.ClearEnabled);
-
-            await _tableStorageService.InsertAsync(log, cancellationToken);
+            await ReviewMatchAsync(request, "Has match with children but children's age is greater.", cancellationToken);
         }
 
         return Result.Success();
+    }
+
+    private async Task ReviewMatchAsync(ReviewMatch request, string notes, CancellationToken cancellationToken)
+    {
+        if (_reviewMatchSettings.ClearEnabled)
+        {
+            var cloudCheckRequest = new ReviewMatchRequest
+            {
+                AssociationReference = request.Association.AssociationReference,
+                Review = new Review
+                {
+                    Decision = CloudCheckDecisionConsts.Cleared,
+                    MatchId = request.Match.MatchId,
+                    Notes = notes
+                }
+            };
+
+            await _client.ReviewMatchAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
+                _cloudCheckSettings.ApiSecret);
+        }
+
+        var log = new ReviewMatchLogEntity(request.Association.AssociationReference, request.Match.MatchId, notes,
+            _reviewMatchSettings.ClearEnabled);
+
+        await _tableStorageService.InsertAsync(log, cancellationToken);
+
+        Result.Success();
     }
 }

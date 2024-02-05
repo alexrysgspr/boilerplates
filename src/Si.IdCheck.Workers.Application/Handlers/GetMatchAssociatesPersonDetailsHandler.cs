@@ -8,13 +8,13 @@ using Si.IdCheck.Workers.Application.Models.Requests;
 using Si.IdCheck.Workers.Application.Settings;
 
 namespace Si.IdCheck.Workers.Application.Handlers;
-public class GetMatchAssociatesPeidDetailsHandler : IRequestHandler<GetMatchAssociatesPeidDetailsRequest, Result<List<PeidLookupResponse>>>
+public class GetMatchAssociatesPersonDetailsHandler : IRequestHandler<GetMatchAssociatesPersonDetailsRequest, Result<List<PeidLookupResponse>>>
 {
     private readonly ICloudCheckApiClient _client;
     private readonly CloudCheckSettings _cloudCheckSettings;
     private readonly ReviewMatchSettings _reviewMatchSettingsOption;
 
-    public GetMatchAssociatesPeidDetailsHandler(
+    public GetMatchAssociatesPersonDetailsHandler(
         ICloudCheckApiClient client,
         IOptions<CloudCheckSettings> cloudCheckSettingsOption,
         IOptions<ReviewMatchSettings> reviewMatchSettingsOption)
@@ -24,7 +24,7 @@ public class GetMatchAssociatesPeidDetailsHandler : IRequestHandler<GetMatchAsso
         _reviewMatchSettingsOption = reviewMatchSettingsOption.Value;
     }
 
-    public async Task<Result<List<PeidLookupResponse>>> Handle(GetMatchAssociatesPeidDetailsRequest request, CancellationToken cancellationToken)
+    public async Task<Result<List<PeidLookupResponse>>> Handle(GetMatchAssociatesPersonDetailsRequest request, CancellationToken cancellationToken)
     {
         var results = new List<PeidLookupResponse>();
 
@@ -32,6 +32,7 @@ public class GetMatchAssociatesPeidDetailsHandler : IRequestHandler<GetMatchAsso
 
         foreach (var associate in request.Associates)
         {
+            //Filter relationships to lookup only.
             if (!_reviewMatchSettingsOption.RelationshipsToFiltler.Contains(associate.Relationship))
             {
                 continue;

@@ -7,12 +7,12 @@ using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
 
 namespace Si.IdCheck.Workers.Application.Handlers;
-public class GetPeidDetailsHandler : IRequestHandler<GetPeidDetails, Result<PeidLookupResponse>>
+public class GetPersonDetailsHandler : IRequestHandler<GetPersonDetails, Result<PeidLookupResponse>>
 {
     private readonly ICloudCheckApiClient _client;
     private readonly CloudCheckSettings _cloudCheckSettings;
 
-    public GetPeidDetailsHandler(
+    public GetPersonDetailsHandler(
         ICloudCheckApiClient client,
         IOptions<CloudCheckSettings> cloudCheckSettingsOption)
     {
@@ -20,7 +20,7 @@ public class GetPeidDetailsHandler : IRequestHandler<GetPeidDetails, Result<Peid
         _cloudCheckSettings = cloudCheckSettingsOption.Value;
     }
 
-    public async Task<Result<PeidLookupResponse>> Handle(GetPeidDetails request, CancellationToken cancellationToken)
+    public async Task<Result<PeidLookupResponse>> Handle(GetPersonDetails request, CancellationToken cancellationToken)
     {
 
         var cloudCheckRequest = new PeidLookupRequest

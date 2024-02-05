@@ -36,9 +36,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C754F17E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Workers.Application", "Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj", "{375A94F5-1377-4A01-8984-BB83172F64A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Si.IdCheck.AzureTableStorage", "Si.IdCheck.TableStorage\Si.IdCheck.AzureTableStorage.csproj", "{4DBEBAB4-4182-46E5-97A7-AC77E6440C72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.AzureTableStorage", "Si.IdCheck.TableStorage\Si.IdCheck.AzureTableStorage.csproj", "{4DBEBAB4-4182-46E5-97A7-AC77E6440C72}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.CloudCheck", "Si.IdCheck.ApiClients.Cloudcheck\Si.IdCheck.ApiClients.CloudCheck.csproj", "{F2270A4D-D9BC-4758-AF6A-6958B3DEB62E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Si.IdCheck.Unit.Tests", "Si.IdCheck.Unit.Tests\Si.IdCheck.Unit.Tests.csproj", "{08F59F63-94BB-4673-A55E-74506E134EB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,10 @@ Global
 		{F2270A4D-D9BC-4758-AF6A-6958B3DEB62E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2270A4D-D9BC-4758-AF6A-6958B3DEB62E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2270A4D-D9BC-4758-AF6A-6958B3DEB62E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08F59F63-94BB-4673-A55E-74506E134EB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08F59F63-94BB-4673-A55E-74506E134EB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08F59F63-94BB-4673-A55E-74506E134EB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08F59F63-94BB-4673-A55E-74506E134EB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +86,7 @@ Global
 		{4A9AE4C6-7E3A-41FE-BD6D-8C3030BE06EB} = {C754F17E-AE29-46AF-9832-B90664AC3B03}
 		{4DBEBAB4-4182-46E5-97A7-AC77E6440C72} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
 		{F2270A4D-D9BC-4758-AF6A-6958B3DEB62E} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
+		{08F59F63-94BB-4673-A55E-74506E134EB5} = {C754F17E-AE29-46AF-9832-B90664AC3B03}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A85ACA9F-CB9B-4BEB-8A2C-373D8756283E}

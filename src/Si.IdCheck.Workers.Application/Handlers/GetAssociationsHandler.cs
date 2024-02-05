@@ -26,6 +26,8 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
 
     public async Task<Result<List<Association>>> Handle(GetAssociations request, CancellationToken cancellationToken)
     {
+        //todo: Return associations here
+        //todo: Client based credentials
         var cloudCheckRequest = new GetAssociationsRequest
         {
             Cursor = 0,
@@ -53,8 +55,10 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
             }
         }
 
-        //todo: Return associations here
-        //todo: Client based credentials
+        associations = associations
+            .Where(x => "Person".Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+
         return Result.Success(associations);
     }
 }

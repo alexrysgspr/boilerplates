@@ -3,7 +3,7 @@ using MediatR;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 
 namespace Si.IdCheck.Workers.Application.Models.Requests;
-public class GetPeidDetails : IRequest<Result<PeidLookupResponse>>
+public class GetMatchAssociatesPersonDetailsRequest : IRequest<Result<List<PeidLookupResponse>>>
 {
-    public int Peid { get; set; }
+    public IList<AssociateDetails> Associates { get; set; }
 }

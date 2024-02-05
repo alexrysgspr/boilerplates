@@ -34,7 +34,9 @@ public class AlertsWorker : CronJobWorker
             var getAssociationsRequest = new GetAssociations();
             isRunning = true;
 
+            //Get associations
             var associations = await mediator.Send(getAssociationsRequest, cancellationToken);
+
             foreach (var association in associations.Value)
             {
                 var associationRequest = new GetAssociation
@@ -42,33 +44,35 @@ public class AlertsWorker : CronJobWorker
                     AssociationReference = association.AssociationReference
                 };
 
+                //Get association details
                 var associationResult = await mediator.Send(associationRequest, cancellationToken);
-
 
                 foreach (var match in associationResult.Value.Matches)
                 {
-                    var lookupPeidRequest = new GetPeidDetails
+                    var getPersonDetailsRequest = new GetPersonDetails
                     {
                         Peid = match.Peid
                     };
 
-                    var matchPeidResult = await mediator.Send(lookupPeidRequest, cancellationToken);
+                    //Get association's match details in lookup
+                    var personDetailsResult = await mediator.Send(getPersonDetailsRequest, cancellationToken);
 
-                    foreach (var matchPeid in matchPeidResult.Value.Response.Matches)
+                    foreach (var matchPersonDetails in personDetailsResult.Value.Response.Matches)
                     {
-                        var matchAssociatesPeidDetailsRequest = new GetMatchAssociatesPeidDetailsRequest
+                        //Get details of the match's associate
+                        var matchAssociatesDetailsRequest = new GetMatchAssociatesPersonDetailsRequest
                         {
-                            Associates = matchPeid.Associates
+                            Associates = matchPersonDetails.Associates
                         };
 
-                        var associatePeidDetailsResult = await mediator.Send(matchAssociatesPeidDetailsRequest, cancellationToken);
+                        var matchAssociatesPersonDetailsResult = await mediator.Send(matchAssociatesDetailsRequest, cancellationToken);
 
                         var reviewMatchRequest = new ReviewMatch
                         {
-                            AssociationReference = association.AssociationReference,
-                            Associates = associatePeidDetailsResult,
+                            Association = associationResult.Value,
+                            Associates = matchAssociatesPersonDetailsResult,
                             Match = match,
-                            MatchDetails = matchPeid
+                            MatchDetails = matchPersonDetails
                         };
 
                         await mediator.Send(reviewMatchRequest, cancellationToken);
