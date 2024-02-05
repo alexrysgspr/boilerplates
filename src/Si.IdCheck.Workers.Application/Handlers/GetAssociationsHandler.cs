@@ -55,8 +55,10 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
             }
         }
 
+        var personType = "Person";
+
         associations = associations
-            .Where(x => "Person".Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
+            .Where(x => personType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
 
         return Result.Success(associations);

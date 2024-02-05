@@ -69,16 +69,14 @@ public class AlertsWorker : CronJobWorker
 
                         var reviewMatchRequest = new ReviewMatch
                         {
-                            Association = associationResult.Value,
-                            Associates = matchAssociatesPersonDetailsResult,
+                            PersonOfInterest = associationResult.Value,
                             Match = match,
+                            MatchAssociates = matchAssociatesPersonDetailsResult,
                             MatchDetails = matchPersonDetails
                         };
 
                         await mediator.Send(reviewMatchRequest, cancellationToken);
                     }
-
-
                 }
             }
 

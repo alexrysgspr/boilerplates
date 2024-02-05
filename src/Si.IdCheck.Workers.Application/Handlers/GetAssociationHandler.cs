@@ -30,9 +30,11 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
         var association = await _client.GetAssociationAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
             _cloudCheckSettings.ApiSecret);
 
+        var relationshipType = "RELATIONSHIP";
+
         association.Matches = association
             .Matches
-            .Where(x => x.Type == "RELATIONSHIP")
+            .Where(x => relationshipType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
 
         return Result.Success(association);
