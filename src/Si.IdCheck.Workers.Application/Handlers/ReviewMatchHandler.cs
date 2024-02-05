@@ -61,7 +61,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
         var personOfInterestBirthYear = int.Parse(request.PersonOfInterest.PersonDetail.BirthYear);
         var hasIssue = false;
-
+        var notes = new List<string>();
         foreach (var associate in associates)
         {
             //if true exit loop.
@@ -73,8 +73,12 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
                 || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (!int.TryParse(associate.DateOfBirthYear, out var parentBirthYear) ||
-                    parentBirthYear >= personOfInterestBirthYear) continue;
+                if (int.TryParse(associate.DateOfBirthYear, out var parentBirthYear) &&
+                    parentBirthYear > personOfInterestBirthYear)
+                {
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{parentBirthYear}'.");
+                    continue;
+                }
 
                 hasIssue = true;
                 break;
@@ -84,8 +88,13 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
                 //Condition to check if it's a child but birth year is lesser than person of interest's birth year
-                if (!int.TryParse(associate.DateOfBirthYear, out var childBirthYear) ||
-                    childBirthYear <= personOfInterestBirthYear) continue;
+                if (int.TryParse(associate.DateOfBirthYear, out var childBirthYear) &&
+                    childBirthYear < personOfInterestBirthYear)
+                {
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{childBirthYear}'.");
+
+                    continue;
+                }
 
                 hasIssue = true;
                 break;
@@ -94,7 +103,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
         if (!hasIssue)
         {
-            await ReviewMatchAsync(request, "Has match with children but children's age is greater.", cancellationToken);
+            await ReviewMatchAsync(request, string.Join('\n', notes), cancellationToken);
         }
 
         return Result.Success();

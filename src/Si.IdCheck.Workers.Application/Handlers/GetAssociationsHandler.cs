@@ -26,7 +26,6 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<Li
 
     public async Task<Result<List<Association>>> Handle(GetAssociations request, CancellationToken cancellationToken)
     {
-        //todo: Return associations here
         //todo: Client based credentials
         var cloudCheckRequest = new GetAssociationsRequest
         {
