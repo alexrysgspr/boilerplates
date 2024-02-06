@@ -2,6 +2,7 @@
 using Moq;
 using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.AzureTableStorage;
 using Si.IdCheck.AzureTableStorage.Models;
 using Si.IdCheck.Unit.Tests.Helpers;
@@ -94,6 +95,30 @@ public class ReviewMatchHandlerTests
         await handler.Handle(request, CancellationToken.None);
 
         mockClient.Verify(x => x.ReviewMatchAsync(It.IsAny<ReviewMatchRequest>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+
+        mockTableStorageService.Verify(x => x.InsertAsync(It.IsAny<ReviewMatchLogEntity>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Should_Clear_Match_If_No_Associates()
+    {
+        var request = TestUtility.CreateReviewRequestWithoutHit();
+        request.MatchAssociates = new List<PeidLookupResponse>();
+
+        var mockClient = new Mock<ICloudCheckApiClient>();
+        var mockTableStorageService = new Mock<IAzureTableStorageService<ReviewMatchLogEntity>>();
+        var reviewMatchSettings = Options.Create(new ReviewMatchSettings
+        {
+            ClearEnabled = true
+        });
+
+        var cloudCheckSettings = Options.Create(new CloudCheckSettings());
+
+        var handler = new ReviewMatchHandler(mockClient.Object, mockTableStorageService.Object, cloudCheckSettings, reviewMatchSettings);
+
+        await handler.Handle(request, CancellationToken.None);
+
+        mockClient.Verify(x => x.ReviewMatchAsync(It.IsAny<ReviewMatchRequest>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
 
         mockTableStorageService.Verify(x => x.InsertAsync(It.IsAny<ReviewMatchLogEntity>(), It.IsAny<CancellationToken>()), Times.Once);
     }

@@ -36,15 +36,15 @@ public static class GetAssociationRequestExtensions
             ["nonce"] = nonce,
             ["timestamp"] = timestamp,
             ["pageSize"] = request.PageSize.ToString(),
-            ["filterAlertOnly"] = request.FilterAlertOnly.ToString(),
-            ["filterIsDeleted"] = request.FilterIsDeleted.ToString(),
+            ["filterAlertOnly"] = request.FilterAlertOnly.ToString().ToLower(),
+            ["filterIsDeleted"] = request.FilterIsDeleted.ToString().ToLower(),
             ["cursor"] = request.Cursor.ToString()
         };
 
         var signature = CloudCheckHelpers.CreateSignature(parameters, path, apiSecret);
 
         return
-            $"?key={apiKey}&nonce={nonce}&timestamp={timestamp}&signature={signature}&pageSize={request.PageSize}&filterAlertOnly={request.FilterAlertOnly}&filterIsDeleted={request.FilterIsDeleted}&cursor={request.Cursor}";
+            $"?key={apiKey}&nonce={nonce}&timestamp={timestamp}&signature={signature}&pageSize={request.PageSize}&filterAlertOnly={request.FilterAlertOnly.ToString().ToLower()}&filterIsDeleted={request.FilterIsDeleted.ToString().ToLower()}&cursor={request.Cursor}";
     }
 
 }

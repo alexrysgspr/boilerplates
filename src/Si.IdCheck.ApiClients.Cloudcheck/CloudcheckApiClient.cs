@@ -33,7 +33,7 @@ public class CloudCheckApiClient : ICloudCheckApiClient
 
             if (responseMessage.IsSuccessStatusCode)
             {
-                await HandleVerifyFailureResponse(responseMessage);
+                await HandleVerifyFailureResponse(responseMessage, queryParams);
 
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
                 var response = JsonSerializer.Deserialize<GetAssociationResponse>(responseString, JsonOptions);
@@ -41,14 +41,14 @@ public class CloudCheckApiClient : ICloudCheckApiClient
                 return response;
             }
 
-            var exception = new Exception($"CloudCheck request failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"CloudCheck request failed Request: '{queryParams}'. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
             Logger.Error(exception, "An error occurred while sending request for get association.");
 
             throw exception;
         }
         catch (Exception e)
         {
-            Logger.Error(e, "An error occurred while sending request for get association.");
+            Logger.Error(e, $"An error occurred while sending request for get association. Request: {queryParams}.");
             throw;
         }
     }
@@ -58,28 +58,27 @@ public class CloudCheckApiClient : ICloudCheckApiClient
         var path = "/watchlist/associations/";
         var queryParams = request.ToQueryParams(path, apiKey, apiSecret);
 
-
         try
         {
             var responseMessage = await _client.GetAsync($"{path}{queryParams}");
 
             if (responseMessage.IsSuccessStatusCode)
             {
-                await HandleVerifyFailureResponse(responseMessage);
+                await HandleVerifyFailureResponse(responseMessage, queryParams);
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
                 var response = JsonSerializer.Deserialize<GetAssociationsResponse>(responseString, JsonOptions);
 
                 return response;
             }
 
-            var exception = new Exception($"CloudCheck request failed. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"CloudCheck request failed Request: '{queryParams}'. Response error code: {responseMessage.StatusCode}. Message: '{await responseMessage.Content.ReadAsStringAsync()}'. Path: {path}.");
             Logger.Error(exception, "An error occurred while sending request for get associations.");
 
             throw exception;
         }
         catch (Exception e)
         {
-            Logger.Error(e, "An error occurred while sending request for get associations.");
+            Logger.Error(e, $"An error occurred while sending request for get associations. Request '{queryParams}'.");
             throw;
         }
     }
@@ -106,14 +105,14 @@ public class CloudCheckApiClient : ICloudCheckApiClient
             var responseString = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
-                await HandleVerifyFailureResponse(response);
+                await HandleVerifyFailureResponse(response, JsonSerializer.Serialize(pairs));
 
                 var idCheckResponse = JsonSerializer.Deserialize<ReviewMatchResponse>(responseString, JsonOptions);
 
                 return idCheckResponse;
             }
 
-            var exception = new Exception($"CloudCheck request failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"CloudCheck request failed. Request: {JsonSerializer.Serialize(pairs)}. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
 
             Logger.Error(exception, "An error occurred while sending request for review match.");
 
@@ -121,7 +120,7 @@ public class CloudCheckApiClient : ICloudCheckApiClient
         }
         catch (Exception e)
         {
-            Logger.Error(e, "An error occurred while sending request for review match.");
+            Logger.Error(e, $"An error occurred while sending request for review match. Request: {JsonSerializer.Serialize(pairs)}.");
             throw;
         }
     }
@@ -149,25 +148,25 @@ public class CloudCheckApiClient : ICloudCheckApiClient
             var responseString = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
-                await HandleVerifyFailureResponse(response);
+                await HandleVerifyFailureResponse(response, JsonSerializer.Serialize(pairs));
 
                 var idCheckResponse = JsonSerializer.Deserialize<PeidLookupResponse>(responseString, JsonOptions);
 
                 return idCheckResponse;
             }
 
-            var exception = new Exception($"CloudCheck request failed. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
+            var exception = new Exception($"CloudCheck request failed. Request: {JsonSerializer.Serialize(pairs)}. Response error code: {response.StatusCode}. Message: '{await response.Content.ReadAsStringAsync()}'. Path: {path}.");
             Logger.Error(exception, "An error occurred while sending request for lookup peid.");
             throw exception;
         }
         catch (Exception e)
         {
-            Logger.Error(e, "An error occurred while sending request for lookup peid.");
+            Logger.Error(e, $"An error occurred while sending request for lookup peid. Request: {JsonSerializer.Serialize(pairs)}.");
             throw;
         }
     }
 
-    private async Task HandleVerifyFailureResponse(HttpResponseMessage httpResponseMessage)
+    private async Task HandleVerifyFailureResponse(HttpResponseMessage httpResponseMessage, string request)
     {
         var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
         var response =
@@ -175,7 +174,7 @@ public class CloudCheckApiClient : ICloudCheckApiClient
 
         if (response is { Verification.Error: { } })
         {
-            var error = new Exception($"CloudCheck request failed. Response error code: {response.Verification.Error.Value}. Message: '{response.Verification.Message}'.");
+            var error = new Exception($"CloudCheck request failed. Request: {request}. Response error code: {response.Verification.Error.Value}. Message: '{response.Verification.Message}'.");
             Logger.Error(error, error.Message);
             throw error;
         }

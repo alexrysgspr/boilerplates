@@ -33,7 +33,7 @@ public class GetMatchAssociatesPersonDetailsHandler : IRequestHandler<GetMatchAs
         foreach (var associate in request.Associates)
         {
             //Filter relationships to lookup only.
-            if (!_reviewMatchSettingsOption.RelationshipsToFiltler.Contains(associate.Relationship))
+            if (!string.IsNullOrEmpty(associate.Relationship) && !_reviewMatchSettingsOption.RelationshipsToFilter.Contains(associate.Relationship))
             {
                 continue;
             }

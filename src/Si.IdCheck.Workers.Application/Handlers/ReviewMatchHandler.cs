@@ -37,6 +37,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         if (!request.MatchAssociates.Any())
         {
             await ReviewMatchAsync(request, "No family member in relationship filter found.", cancellationToken);
+            return Result.Success();
         }
 
         //Check relationships and join the persondetails in the match associates.

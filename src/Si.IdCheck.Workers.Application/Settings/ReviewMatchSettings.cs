@@ -2,5 +2,5 @@
 public class ReviewMatchSettings
 {
     public bool ClearEnabled { get; set; }
-    public string[] RelationshipsToFiltler { get; set; }
+    public string[] RelationshipsToFilter { get; set; }
 }
