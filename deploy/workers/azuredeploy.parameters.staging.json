@@ -34,6 +34,9 @@
     },
     "workSpaceName": {
       "value": "si-s-la-ws"
+    },
+    "storageAccountName": {
+      "value": "sisidchecksa"
     }
   }
 }

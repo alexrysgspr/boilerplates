@@ -38,6 +38,9 @@
     },
     "workSpaceName": {
       "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -196,6 +199,10 @@
                 "[resourceId('Microsoft.Web/Sites/Slots', parameters('webAppName'), 'Staging')]"
               ],
               "properties": {
+                "StorageAccount": {
+                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+                  "type": "Custom"
+                }
               }
             },
             {
