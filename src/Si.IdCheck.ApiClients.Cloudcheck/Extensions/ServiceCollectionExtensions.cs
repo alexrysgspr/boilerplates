@@ -24,12 +24,7 @@ public static class ServiceCollectionExtensions
         })
         .AddTransientHttpErrorPolicy(builder =>
             builder
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))))
-        .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler()
-        {
-            PooledConnectionLifetime = TimeSpan.FromMinutes(15)
-        })
-        .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
         return services;
     }
