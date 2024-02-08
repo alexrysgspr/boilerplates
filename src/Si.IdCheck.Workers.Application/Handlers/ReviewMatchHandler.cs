@@ -34,9 +34,15 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         //todo: Rules for clearing matches;
         //Check first if it matches any of the relationships to filter.
         //If associate is empty, it means we filtered the relationships and it didn't return any result, so we can clear it now.
-        if (!request.MatchAssociates.Any())
+        if (!request.MatchAssociates.AssociatesInRelationshipFilter.Any())
         {
-            await ReviewMatchAsync(request, $"No family member in relationship filter found. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.",cancellationToken);
+            var relationships = request
+                .MatchAssociates
+                .AssociatesNotInInRelationshipFilter
+                .Select(x => x.Relationship)
+                .ToList();
+            
+            await ReviewMatchAsync(request, $"No family member in relationship filter found. Relationships: {string.Join( ", ", relationships)}, AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.", cancellationToken);
             return Result.Success();
         }
 
@@ -46,6 +52,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
         var associatesDetails = request
             .MatchAssociates
+            .AssociatesInRelationshipFilter
             .SelectMany(x => x.Response.Matches)
             .Select(x => x)
             .ToList();

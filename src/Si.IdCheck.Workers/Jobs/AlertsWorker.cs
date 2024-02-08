@@ -71,7 +71,7 @@ public class AlertsWorker : CronJobWorker
                         {
                             PersonOfInterest = associationResult.Value,
                             Match = match,
-                            MatchAssociates = matchAssociatesPersonDetailsResult,
+                            MatchAssociates = matchAssociatesPersonDetailsResult.Value,
                             MatchDetails = matchPersonDetails
                         };
 
