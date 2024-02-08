@@ -31,10 +31,11 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
             _cloudCheckSettings.ApiSecret);
 
         var relationshipType = "RELATIONSHIP";
+        var pepCode = "PEP";
 
         association.Matches = association
             .Matches
-            .Where(x => relationshipType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
+            .Where(x => relationshipType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase) && !x.RiskTypes.Any(y => pepCode.Equals(y.Code, StringComparison.InvariantCultureIgnoreCase)))
             .ToList();
 
         return Result.Success(association);

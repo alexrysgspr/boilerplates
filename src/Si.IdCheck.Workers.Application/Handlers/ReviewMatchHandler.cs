@@ -1,6 +1,9 @@
-﻿using Ardalis.Result;
+﻿using System.Globalization;
+using System.Text.Json;
+using Ardalis.Result;
 using MediatR;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.ApiClients.CloudCheck.Constants;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
@@ -16,7 +19,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
     private readonly CloudCheckSettings _cloudCheckSettings;
     private readonly ReviewMatchSettings _reviewMatchSettings;
     private readonly IAzureTableStorageService<ReviewMatchLogEntity> _tableStorageService;
-
+    private static readonly ILogger Logger = Log.ForContext<ReviewMatchHandler>();
     public ReviewMatchHandler(
         ICloudCheckApiClient client,
         IAzureTableStorageService<ReviewMatchLogEntity> tableStorageService,
@@ -36,13 +39,13 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         //If associate is empty, it means we filtered the relationships and it didn't return any result, so we can clear it now.
         if (!request.MatchAssociates.AssociatesInRelationshipFilter.Any())
         {
-            var relationships = request
+            var associatesNotInRelationshipFilter = request
                 .MatchAssociates
                 .AssociatesNotInInRelationshipFilter
-                .Select(x => x.Relationship)
+                .Select(x => new { x.Peid, x.Relationship, x.Description1})
                 .ToList();
-            
-            await ReviewMatchAsync(request, $"No family member in relationship filter found. Relationships: {string.Join( ", ", relationships)}, AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.", cancellationToken);
+
+            await ReviewMatchAsync(request, $"No family member in relationship filter found. Associates: {JsonSerializer.Serialize(associatesNotInRelationshipFilter)}, AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.", cancellationToken);
             return Result.Success();
         }
 
@@ -58,12 +61,14 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             .ToList();
 
 
-        var associates = request.MatchDetails.Associates
-            .Join(associatesDetails, details => details.Peid, associate => associate.Peid, (associateDetails, associate) => new
+        var associates = request
+            .MatchDetails
+            .Associates
+            .Join(associatesDetails, associateDetails => associateDetails.Peid, matchDetails => matchDetails.Peid, (associateDetails, associate) => new
             {
                 associateDetails.Peid,
                 associateDetails.Relationship,
-                DateOfBirthYear = associate.Dates.FirstOrDefault(x => dobType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))?.Year
+                DateOfBirth = associate.Dates.FirstOrDefault(x => dobType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
             })
             .ToList();
 
@@ -81,11 +86,19 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
                 || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (int.TryParse(associate.DateOfBirthYear, out var parentBirthYear) &&
-                    parentBirthYear > personOfInterestBirthYear)
+                var birthYear = 0;
+
+                if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out var birthdate) || int.TryParse(associate.DateOfBirth?.Year, out birthYear))
                 {
-                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{parentBirthYear}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.");
-                    continue;
+                    if (birthdate.Year > personOfInterestBirthYear || birthYear > personOfInterestBirthYear)
+                    {
+                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
+                        continue;
+                    }
                 }
 
                 hasIssue = true;
@@ -96,12 +109,19 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
                 //Condition to check if it's a child but birth year is lesser than person of interest's birth year
-                if (int.TryParse(associate.DateOfBirthYear, out var childBirthYear) &&
-                    childBirthYear < personOfInterestBirthYear)
+                var birthYear = 0;
+                if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out var birthdate) || int.TryParse(associate.DateOfBirth?.Year, out birthYear))
                 {
-                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{childBirthYear}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.");
+                    if (birthdate.Year < personOfInterestBirthYear || birthdate.Year < birthYear)
+                    {
+                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
 
-                    continue;
+                        continue;
+                    }
                 }
 
                 hasIssue = true;
@@ -145,7 +165,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Logger.Error(e, $"An error occured while saving review match log. ${JsonSerializer.Serialize(log)}");
         }
 
         Result.Success();
