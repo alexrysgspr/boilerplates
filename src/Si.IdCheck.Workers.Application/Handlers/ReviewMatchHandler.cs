@@ -42,7 +42,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             var associatesNotInRelationshipFilter = request
                 .MatchAssociates
                 .AssociatesNotInInRelationshipFilter
-                .Select(x => new { x.Peid, x.Relationship, x.Description1})
+                .Select(x => new { x.Peid, x.Relationship, x.Description1 })
                 .ToList();
 
             await ReviewMatchAsync(request, $"No family member in relationship filter found. Associates: {JsonSerializer.Serialize(associatesNotInRelationshipFilter)}, AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.", cancellationToken);
@@ -86,19 +86,21 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
                 || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
-                var birthYear = 0;
-
                 if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
                         "yyyy-MM-dd",
                         CultureInfo.InvariantCulture,
                         DateTimeStyles.None,
-                        out var birthdate) || int.TryParse(associate.DateOfBirth?.Year, out birthYear))
+                        out var birthdate) && birthdate.Year > personOfInterestBirthYear)
                 {
-                    if (birthdate.Year > personOfInterestBirthYear || birthYear > personOfInterestBirthYear)
-                    {
-                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
-                        continue;
-                    }
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
+                    continue;
+                }
+
+                if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthYear > personOfInterestBirthYear)
+                {
+
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
+                    continue;
                 }
 
                 hasIssue = true;
@@ -109,19 +111,22 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
                 //Condition to check if it's a child but birth year is lesser than person of interest's birth year
-                var birthYear = 0;
                 if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
                         "yyyy-MM-dd",
                         CultureInfo.InvariantCulture,
                         DateTimeStyles.None,
-                        out var birthdate) || int.TryParse(associate.DateOfBirth?.Year, out birthYear))
+                        out var birthdate) && birthdate.Year < personOfInterestBirthYear)
                 {
-                    if (birthdate.Year < personOfInterestBirthYear || birthdate.Year < birthYear)
-                    {
-                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
 
-                        continue;
-                    }
+                    continue;
+                }
+
+                if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthdate.Year < birthYear)
+                {
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
+
+                    continue;
                 }
 
                 hasIssue = true;

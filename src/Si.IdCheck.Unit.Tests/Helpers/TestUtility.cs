@@ -1,5 +1,6 @@
 ﻿using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
+using Si.IdCheck.Workers.Application.Models.Responses;
 
 namespace Si.IdCheck.Unit.Tests.Helpers;
 public static class TestUtility
@@ -114,7 +115,10 @@ public static class TestUtility
             PersonOfInterest = personOfInterest,
             Match = match,
             MatchDetails = matchDetails,
-            MatchAssociates = matchAssociates
+            MatchAssociates = new GetMatchAssociatesPersonDetailsResponse
+            {
+                AssociatesInRelationshipFilter = matchAssociates
+            }
         };
     }
 
@@ -228,7 +232,10 @@ public static class TestUtility
             PersonOfInterest = personOfInterest,
             Match = match,
             MatchDetails = matchDetails,
-            MatchAssociates = matchAssociates
+            MatchAssociates = new GetMatchAssociatesPersonDetailsResponse
+            {
+                AssociatesInRelationshipFilter = matchAssociates
+            }
         };
     }
 
@@ -340,7 +347,10 @@ public static class TestUtility
             PersonOfInterest = personOfInterest,
             Match = match,
             MatchDetails = matchDetails,
-            MatchAssociates = matchAssociates
+            MatchAssociates = new GetMatchAssociatesPersonDetailsResponse
+            {
+                AssociatesInRelationshipFilter = matchAssociates
+            }
         };
     }
 }
