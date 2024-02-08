@@ -16,15 +16,15 @@ public static class ServiceCollectionExtensions
 
         services
             .AddHttpClient<ICloudCheckApiClient, CloudCheckApiClient>(client =>
-        {
-            client.BaseAddress = new Uri(settings.Get<CloudCheckSettings>().BaseUrl);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-        })
-        .AddTransientHttpErrorPolicy(builder =>
-            builder
-                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+            {
+                client.BaseAddress = new Uri(settings.Get<CloudCheckSettings>().BaseUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+        //.AddTransientHttpErrorPolicy(builder =>
+        //    builder
+        //        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
         return services;
     }

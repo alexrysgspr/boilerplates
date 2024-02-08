@@ -16,9 +16,11 @@ public static class ServiceCollectionExtensions
         services
             .AddOptions()
             .AddSingleton<IDateTimeService, DateTimeService>()
+            .AddScoped<IOngoingMonitoringAlertsService, OngoingMonitoringAlertsService>()
             .AddCloudCheck(configuration)
             .AddApplicationDependencies(configuration)
             .AddHostedService<AlertsWorker>()
+            .AddHostedService<JobsWorker>()
             .AddConfigurations(configuration)
             .AddHealthChecks()
             .AddCheck<PingHealthCheck>(nameof(PingHealthCheck));

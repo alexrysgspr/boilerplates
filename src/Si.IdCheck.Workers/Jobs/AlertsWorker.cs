@@ -1,7 +1,11 @@
-﻿using MediatR;
+﻿using System.Text;
+using Azure.Messaging.ServiceBus;
+using MediatR;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Si.IdCheck.Workers.Application.Models.Requests;
+using Si.IdCheck.Workers.Helpers;
 using Si.IdCheck.Workers.Jobs.CronJob;
 using Si.IdCheck.Workers.Services;
 using Si.IdCheck.Workers.Settings;
@@ -10,16 +14,18 @@ namespace Si.IdCheck.Workers.Jobs;
 public class AlertsWorker : CronJobWorker
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ServiceBusSender _serviceBusClient;
 
-    public AlertsWorker(IDateTimeService dateTimeService, 
+    public AlertsWorker(IDateTimeService dateTimeService,
         IOptions<AlertsWorkerSettings> cronWorkerSettings,
-        IServiceScopeFactory serviceScopeFactory) : base(dateTimeService, cronWorkerSettings.Value, Log.ForContext<AlertsWorker>())
+        IServiceScopeFactory serviceScopeFactory,
+        IAzureClientFactory<ServiceBusClient> azureClientFactory) : base(dateTimeService, cronWorkerSettings.Value, Log.ForContext<AlertsWorker>())
     {
         _serviceScopeFactory = serviceScopeFactory;
+        _serviceBusClient = azureClientFactory.CreateClient("SwiftId").CreateSender("ongoing-monitoring-alerts-q");
     }
 
     private bool isRunning;
-
 
     public override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
@@ -37,49 +43,27 @@ public class AlertsWorker : CronJobWorker
             //Get associations
             var associations = await mediator.Send(getAssociationsRequest, cancellationToken);
 
-            foreach (var association in associations.Value)
+            var concurrentWrites = 100;
+            for (var i = 0; i < PagingHelpers.GetPageCount(associations.Value.Count, concurrentWrites); i++)
             {
-                var associationRequest = new GetAssociation
-                {
-                    AssociationReference = association.AssociationReference
-                };
-
-                //Get association details
-                var associationResult = await mediator.Send(associationRequest, cancellationToken);
-
-                foreach (var match in associationResult.Value.Matches)
-                {
-                    var getPersonDetailsRequest = new GetPersonDetails
+                var tasks = associations
+                    .Value
+                        .Skip(i * concurrentWrites)
+                    .Take(concurrentWrites)
+                    .Select(x => _serviceBusClient.SendMessageAsync(new ServiceBusMessage
                     {
-                        Peid = match.Peid
-                    };
+                        Body = new BinaryData(Encoding.UTF8.GetBytes(x.AssociationReference))
+                    }, cancellationToken));
 
-                    //Get association's match details in lookup
-                    var personDetailsResult = await mediator.Send(getPersonDetailsRequest, cancellationToken);
-
-                    foreach (var matchPersonDetails in personDetailsResult.Value.Response.Matches)
-                    {
-                        //Get details of the match's associate
-                        var matchAssociatesDetailsRequest = new GetMatchAssociatesPersonDetailsRequest
-                        {
-                            Associates = matchPersonDetails.Associates
-                        };
-
-                        var matchAssociatesPersonDetailsResult = await mediator.Send(matchAssociatesDetailsRequest, cancellationToken);
-
-                        var reviewMatchRequest = new ReviewMatch
-                        {
-                            PersonOfInterest = associationResult.Value,
-                            Match = match,
-                            MatchAssociates = matchAssociatesPersonDetailsResult.Value,
-                            MatchDetails = matchPersonDetails
-                        };
-
-                        await mediator.Send(reviewMatchRequest, cancellationToken);
-                    }
+                try
+                {
+                    await Task.WhenAll(tasks);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, "Failed writing / publishing portfolio cash details.");
                 }
             }
-
         }
         catch (Exception e)
         {

@@ -45,7 +45,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 .Select(x => new { x.Peid, x.Relationship, x.Description1 })
                 .ToList();
 
-            await ReviewMatchAsync(request, $"No family member in relationship filter found. Associates: {JsonSerializer.Serialize(associatesNotInRelationshipFilter)}, AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.", cancellationToken);
+            await ReviewMatchAsync(request, $"No associate found in the relationship filter. Associates: {JsonSerializer.Serialize(associatesNotInRelationshipFilter)}, AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.", cancellationToken);
             return Result.Success();
         }
 
@@ -83,8 +83,18 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 break;
             }
 
+            if (_reviewMatchSettings.RelationshipsToFilter.Contains(associate.Relationship, StringComparer.InvariantCultureIgnoreCase) && 
+                !CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) && 
+                !CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) &&
+                !CloudCheckRelationshipConsts.Son.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) &&
+                !CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
+            {
+                hasIssue = true;
+                break;
+            }
+
             if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
-                || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
+                    || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
                 if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
                         "yyyy-MM-dd",
@@ -99,7 +109,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthYear > personOfInterestBirthYear)
                 {
 
-                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthYear}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
                     continue;
                 }
 
@@ -124,7 +134,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
 
                 if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthdate.Year < birthYear)
                 {
-                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthYear}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
 
                     continue;
                 }
@@ -171,6 +181,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         catch (Exception e)
         {
             Logger.Error(e, $"An error occured while saving review match log. ${JsonSerializer.Serialize(log)}");
+            throw;
         }
 
         Result.Success();
