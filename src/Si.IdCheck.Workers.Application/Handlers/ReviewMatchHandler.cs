@@ -36,7 +36,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         //If associate is empty, it means we filtered the relationships and it didn't return any result, so we can clear it now.
         if (!request.MatchAssociates.Any())
         {
-            await ReviewMatchAsync(request, "No family member in relationship filter found.", cancellationToken);
+            await ReviewMatchAsync(request, $"No family member in relationship filter found. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.",cancellationToken);
             return Result.Success();
         }
 
@@ -77,7 +77,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 if (int.TryParse(associate.DateOfBirthYear, out var parentBirthYear) &&
                     parentBirthYear > personOfInterestBirthYear)
                 {
-                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{parentBirthYear}'.");
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{parentBirthYear}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.");
                     continue;
                 }
 
@@ -92,7 +92,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                 if (int.TryParse(associate.DateOfBirthYear, out var childBirthYear) &&
                     childBirthYear < personOfInterestBirthYear)
                 {
-                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{childBirthYear}'.");
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{childBirthYear}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}.");
 
                     continue;
                 }
