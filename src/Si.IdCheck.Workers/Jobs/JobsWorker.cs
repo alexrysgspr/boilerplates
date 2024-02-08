@@ -2,8 +2,11 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Options;
 using Serilog;
+using Si.IdCheck.Workers.Constants;
 using Si.IdCheck.Workers.Services;
+using Si.IdCheck.Workers.Settings;
 using ILogger = Serilog.ILogger;
 
 namespace Si.IdCheck.Workers.Jobs;
@@ -16,13 +19,16 @@ public class JobsWorker : BackgroundService
     private readonly IAzureClientFactory<ServiceBusClient> _azureClientFactory;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private CancellationToken _cancellationToken;
+    private readonly ServiceBusSettings _serviceBusSettings;
 
     public JobsWorker(
         IAzureClientFactory<ServiceBusClient> azureClientFactory,
-        IServiceScopeFactory serviceScopeFactory)
+        IServiceScopeFactory serviceScopeFactory,
+        IOptions<ServiceBusSettings> serviceBusSettingsOptions)
     {
         _azureClientFactory = azureClientFactory;
         _serviceScopeFactory = serviceScopeFactory;
+        _serviceBusSettings = serviceBusSettingsOptions.Value;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,8 +36,8 @@ public class JobsWorker : BackgroundService
         //todo: queue name
         _cancellationToken = stoppingToken;
         _processor = _azureClientFactory
-            .CreateClient("SwiftId")
-            .CreateProcessor("ongoing-monitoring-alerts-q", new ServiceBusProcessorOptions
+            .CreateClient(ServiceBusConsts.ClientName)
+            .CreateProcessor(_serviceBusSettings.OngoingMonitoringAlertsQueueName, new ServiceBusProcessorOptions
             {
                 MaxAutoLockRenewalDuration = TimeSpan.FromMinutes(5),
                 MaxConcurrentCalls = 1,

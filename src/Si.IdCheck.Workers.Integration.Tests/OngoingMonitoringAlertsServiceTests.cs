@@ -15,8 +15,19 @@ public class OngoingMonitoringAlertsServiceTests : IClassFixture<FactoryBase>
     [Fact]
     public async Task Tests1()
     {
-        var service = _factory.Services.GetService<IOngoingMonitoringAlertsService>()!;
+        using var scope = _factory.Services.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<IOngoingMonitoringAlertsService>();
 
-        await service.DoWorkAsync("025a03c8-f618-4624-abd8-bd534e267a28", CancellationToken.None);
+        do
+        {
+            try
+            {
+                await service.DoWorkAsync("006c5ba8-35f9-4345-a584-f0e488eab328", CancellationToken.None);
+            }
+            catch (Exception e)
+            {
+                await Task.Delay(1000);
+            }
+        } while (true);
     }
 }

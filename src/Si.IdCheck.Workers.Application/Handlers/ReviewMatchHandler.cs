@@ -132,7 +132,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
                     continue;
                 }
 
-                if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthdate.Year < birthYear)
+                if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthYear < personOfInterestBirthYear)
                 {
                     notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthYear}'. AssociationReference: {request.PersonOfInterest.AssociationReference}, MatchId: {request.Match.MatchId}, Peid: {request.Match.Peid}. RiskType: RCA.");
 

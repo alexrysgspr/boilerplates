@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Azure;
 using Si.IdCheck.ApiClients.CloudCheck.Extensions;
+using Si.IdCheck.Workers.Constants;
 using Si.IdCheck.Workers.HealthChecks;
 using Si.IdCheck.Workers.Jobs;
 using Si.IdCheck.Workers.Services;
@@ -19,7 +20,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IOngoingMonitoringAlertsService, OngoingMonitoringAlertsService>()
             .AddCloudCheck(configuration)
             .AddApplicationDependencies(configuration)
-            .AddHostedService<AlertsWorker>()
+            .AddHostedService<OngoingMonitoringAlertsWorker>()
             .AddHostedService<JobsWorker>()
             .AddConfigurations(configuration)
             .AddHealthChecks()
@@ -28,14 +29,17 @@ public static class ServiceCollectionExtensions
         services
             .AddAzureClients(builder =>
             {
+                services
+                    .Configure<ServiceBusSettings>(configuration.GetSection(nameof(ServiceBusSettings)));
+
                 builder
-                    .AddServiceBusClient(configuration.GetConnectionString("Servicebus"))
-                    .WithName("SwiftId")
+                    .AddServiceBusClient(configuration.GetConnectionString(ServiceBusConsts.ConnectionStringName))
+                    .WithName(ServiceBusConsts.ClientName)
                     .ConfigureOptions(options =>
                     {
                         options.RetryOptions.Delay = TimeSpan.FromMilliseconds(50);
                         options.RetryOptions.MaxDelay = TimeSpan.FromSeconds(5);
-                        options.RetryOptions.MaxRetries = 3;
+                        options.RetryOptions.MaxRetries = 1;
                     });
             });
 
@@ -45,7 +49,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .Configure<AlertsWorkerSettings>(configuration.GetSection(nameof(AlertsWorkerSettings)));
+            .Configure<OngoingMonitoringAlertsWorkerSettings>(configuration.GetSection(nameof(Si.IdCheck.Workers.Settings.OngoingMonitoringAlertsWorkerSettings)));
 
         return services;
     }

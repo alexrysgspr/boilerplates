@@ -5,24 +5,26 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Si.IdCheck.Workers.Application.Models.Requests;
+using Si.IdCheck.Workers.Constants;
 using Si.IdCheck.Workers.Helpers;
 using Si.IdCheck.Workers.Jobs.CronJob;
 using Si.IdCheck.Workers.Services;
 using Si.IdCheck.Workers.Settings;
 namespace Si.IdCheck.Workers.Jobs;
 
-public class AlertsWorker : CronJobWorker
+public class OngoingMonitoringAlertsWorker : CronJobWorker
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ServiceBusSender _serviceBusClient;
 
-    public AlertsWorker(IDateTimeService dateTimeService,
-        IOptions<AlertsWorkerSettings> cronWorkerSettings,
+    public OngoingMonitoringAlertsWorker(IDateTimeService dateTimeService,
+        IOptions<Settings.OngoingMonitoringAlertsWorkerSettings> cronWorkerSettings,
         IServiceScopeFactory serviceScopeFactory,
-        IAzureClientFactory<ServiceBusClient> azureClientFactory) : base(dateTimeService, cronWorkerSettings.Value, Log.ForContext<AlertsWorker>())
+        IAzureClientFactory<ServiceBusClient> azureClientFactory,
+        IOptions<ServiceBusSettings> serviceBusSettingsOptions) : base(dateTimeService, cronWorkerSettings.Value, Log.ForContext<OngoingMonitoringAlertsWorker>())
     {
         _serviceScopeFactory = serviceScopeFactory;
-        _serviceBusClient = azureClientFactory.CreateClient("SwiftId").CreateSender("ongoing-monitoring-alerts-q");
+        _serviceBusClient = azureClientFactory.CreateClient(ServiceBusConsts.ClientName).CreateSender(serviceBusSettingsOptions.Value.OngoingMonitoringAlertsQueueName);
     }
 
     private bool isRunning;
