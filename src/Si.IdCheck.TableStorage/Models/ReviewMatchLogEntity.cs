@@ -11,11 +11,11 @@ public class ReviewMatchLogEntity : AzureTableStorageEntity
         
     }
 
-    public ReviewMatchLogEntity(string associationId, string matchId, string reason, bool isCleared)
+    public ReviewMatchLogEntity(string associationReference, string matchId, string reason, bool isCleared)
     {
-        RowKey = DateTime.Now.ToRowKey();
-        PartitionKey = associationId;
-        AssociationReference = associationId;
+        RowKey = matchId;
+        PartitionKey = associationReference;
+        AssociationReference = associationReference;
         MatchId = matchId;
         Reason = reason;
         IsCleared = isCleared;

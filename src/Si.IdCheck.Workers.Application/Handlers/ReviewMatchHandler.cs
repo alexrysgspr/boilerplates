@@ -132,7 +132,14 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
         var log = new ReviewMatchLogEntity(request.PersonOfInterest.AssociationReference, request.Match.MatchId, notes,
             _reviewMatchSettings.ClearEnabled);
 
-        await _tableStorageService.InsertAsync(log, cancellationToken);
+        try
+        {
+            await _tableStorageService.InsertOrMergeAsync(log, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
 
         Result.Success();
     }
