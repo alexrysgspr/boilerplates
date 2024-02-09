@@ -2,7 +2,6 @@
 using Moq;
 using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
-using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.AzureTableStorage;
 using Si.IdCheck.AzureTableStorage.Models;
 using Si.IdCheck.Unit.Tests.Helpers;
@@ -21,7 +20,18 @@ public class ReviewMatchHandlerTests
         var mockTableStorageService = new Mock<IAzureTableStorageService<ReviewMatchLogEntity>>();
         var reviewMatchSettings = Options.Create(new ReviewMatchSettings
         {
-            ClearEnabled = true
+            ClearEnabled = true,
+            RelationshipsToFilter =
+            [
+                "WIFE",
+                "HUSBAND",
+                "BROTHER",
+                "SISTER",
+                "SON",
+                "DAUGHTER",
+                "MOTHER",
+                "FATHER"
+            ]
         });
 
         var cloudCheckSettings = Options.Create(new CloudCheckSettings());
@@ -42,7 +52,18 @@ public class ReviewMatchHandlerTests
         var mockTableStorageService = new Mock<IAzureTableStorageService<ReviewMatchLogEntity>>();
         var reviewMatchSettings = Options.Create(new ReviewMatchSettings
         {
-            ClearEnabled = true
+            ClearEnabled = true,
+            RelationshipsToFilter =
+            [
+                "WIFE",
+                "HUSBAND",
+                "BROTHER",
+                "SISTER",
+                "SON",
+                "DAUGHTER",
+                "MOTHER",
+                "FATHER"
+            ]
         });
 
         var cloudCheckSettings = Options.Create(new CloudCheckSettings());
@@ -63,7 +84,18 @@ public class ReviewMatchHandlerTests
         var mockTableStorageService = new Mock<IAzureTableStorageService<ReviewMatchLogEntity>>();
         var reviewMatchSettings = Options.Create(new ReviewMatchSettings
         {
-            ClearEnabled = true
+            ClearEnabled = true,
+            RelationshipsToFilter =
+            [
+                "WIFE",
+                "HUSBAND",
+                "BROTHER",
+                "SISTER",
+                "SON",
+                "DAUGHTER",
+                "MOTHER",
+                "FATHER"
+            ]
         });
 
         var cloudCheckSettings = Options.Create(new CloudCheckSettings());
@@ -86,7 +118,18 @@ public class ReviewMatchHandlerTests
         var mockTableStorageService = new Mock<IAzureTableStorageService<ReviewMatchLogEntity>>();
         var reviewMatchSettings = Options.Create(new ReviewMatchSettings
         {
-            ClearEnabled = false
+            ClearEnabled = false,
+            RelationshipsToFilter =
+            [
+                "WIFE",
+                "HUSBAND",
+                "BROTHER",
+                "SISTER",
+                "SON",
+                "DAUGHTER",
+                "MOTHER",
+                "FATHER"
+            ]
         });
 
         var cloudCheckSettings = Options.Create(new CloudCheckSettings());
@@ -114,7 +157,18 @@ public class ReviewMatchHandlerTests
         var mockTableStorageService = new Mock<IAzureTableStorageService<ReviewMatchLogEntity>>();
         var reviewMatchSettings = Options.Create(new ReviewMatchSettings
         {
-            ClearEnabled = true
+            ClearEnabled = true,
+            RelationshipsToFilter =
+            [
+                "WIFE",
+                "HUSBAND",
+                "BROTHER",
+                "SISTER",
+                "SON",
+                "DAUGHTER",
+                "MOTHER",
+                "FATHER"
+            ]
         });
 
         var cloudCheckSettings = Options.Create(new CloudCheckSettings());
