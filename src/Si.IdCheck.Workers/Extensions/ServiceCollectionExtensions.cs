@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .Configure<OngoingMonitoringAlertsWorkerSettings>(configuration.GetSection(nameof(Si.IdCheck.Workers.Settings.OngoingMonitoringAlertsWorkerSettings)));
+            .Configure<OngoingMonitoringAlertsWorkerSettings>(configuration.GetSection(nameof(OngoingMonitoringAlertsWorkerSettings)));
 
         return services;
     }

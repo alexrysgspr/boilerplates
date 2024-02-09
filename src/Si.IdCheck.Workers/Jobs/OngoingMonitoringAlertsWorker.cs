@@ -46,7 +46,9 @@ public class OngoingMonitoringAlertsWorker : CronJobWorker
             var associations = await mediator.Send(getAssociationsRequest, cancellationToken);
 
             var concurrentWrites = 100;
-            for (var i = 0; i < PagingHelpers.GetPageCount(associations.Value.Count, concurrentWrites); i++)
+            var pageCount = PagingHelpers.GetPageCount(associations.Value.Count, concurrentWrites);
+
+            for (var i = 0; i < pageCount; i++)
             {
                 var tasks = associations
                     .Value

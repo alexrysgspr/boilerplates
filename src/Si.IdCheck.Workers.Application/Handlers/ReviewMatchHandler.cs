@@ -68,12 +68,13 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             {
                 associateDetails.Peid,
                 associateDetails.Relationship,
-                DateOfBirth = associate.Dates.FirstOrDefault(x => dobType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
+                DateOfBirth = associate.Dates?.FirstOrDefault(x => dobType.Equals(x.Type, StringComparison.InvariantCultureIgnoreCase))
             })
             .ToList();
 
-        var personOfInterestBirthYear = int.Parse(request.PersonOfInterest.PersonDetail.BirthYear);
-        var hasIssue = false;
+
+        var hasIssue = !int.TryParse(request.PersonOfInterest.PersonDetail?.BirthYear, out var personOfInterestBirthYear);
+
         var notes = new List<string>();
         foreach (var associate in associates)
         {
@@ -94,7 +95,7 @@ public class ReviewMatchHandler : IRequestHandler<ReviewMatch, Result>
             }
 
             if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
-                    || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
+                || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
             {
                 if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
                         "yyyy-MM-dd",

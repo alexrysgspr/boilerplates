@@ -28,9 +28,11 @@ public class GetPersonDetailsHandler : IRequestHandler<GetPersonDetails, Result<
             Peid = request.Peid
         };
 
-        var peid = await _client.LookupPeidAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
+        var result = await _client.LookupPeidAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
             _cloudCheckSettings.ApiSecret);
 
-        return Result.Success(peid);
+        result.Response.Matches ??= new List<MatchDetails>();
+
+        return Result.Success(result);
     }
 }

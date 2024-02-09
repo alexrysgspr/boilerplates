@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
-using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
 using Si.IdCheck.Workers.Application.Models.Responses;
 using Si.IdCheck.Workers.Application.Settings;
@@ -51,6 +50,9 @@ public class GetMatchAssociatesPersonDetailsHandler : IRequestHandler<GetMatchAs
 
             var result = await _client.LookupPeidAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
                 _cloudCheckSettings.ApiSecret);
+
+            if (result.Response.Matches == null! || !result.Response.Matches.Any())
+                continue;
 
             response.AssociatesInRelationshipFilter.Add(result);
         }

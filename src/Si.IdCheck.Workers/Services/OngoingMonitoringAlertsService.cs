@@ -1,5 +1,7 @@
 ﻿using MediatR;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
+using Si.IdCheck.Workers.Helpers;
 
 namespace Si.IdCheck.Workers.Services;
 
@@ -28,45 +30,58 @@ public class OngoingMonitoringAlertsService : IOngoingMonitoringAlertsService
 
         var associationResult = await _mediator.Send(associationRequest, cancellationToken);
 
-        foreach (var match in associationResult.Value.Matches)
+        var concurrentWrites = 100;
+        var pageCount = PagingHelpers.GetPageCount(associationResult.Value.Matches.Count, concurrentWrites);
+
+        for (var i = 0; i < pageCount; i++)
         {
-            var getPersonDetailsRequest = new GetPersonDetails
-            {
-                Peid = match.Peid
-            };
-
-            //Get association's match details in lookup
-
-            var personDetailsResult =
-                await _mediator.Send(getPersonDetailsRequest, cancellationToken);
-
-            var matches = personDetailsResult
-                .Value
-                .Response
-                .Matches
-                .Where(x => x != null)
+            var tasks = associationResult.Value.Matches
+                .Skip(i * concurrentWrites)
+                .Take(concurrentWrites)
+                .Select(match => ReviewMatch(associationResult.Value, match, cancellationToken))
                 .ToList();
 
-            foreach (var matchPersonDetails in matches)
+            await Task.WhenAll(tasks);
+        }
+    }
+
+    public async Task ReviewMatch(GetAssociationResponse association, Match match, CancellationToken cancellationToken)
+    {
+        var getPersonDetailsRequest = new GetPersonDetails
+        {
+            Peid = match.Peid
+        };
+
+        var personDetailsResult =
+            await _mediator.Send(getPersonDetailsRequest, cancellationToken);
+
+        var matches = personDetailsResult
+            .Value
+            .Response
+            .Matches
+            .Where(x => x != null)
+            .ToList();
+
+        foreach (var matchPersonDetails in matches)
+        {
+            //Get details of the match's associate
+            var matchAssociatesDetailsRequest = new GetMatchAssociatesPersonDetailsRequest
             {
-                //Get details of the match's associate
-                var matchAssociatesDetailsRequest = new GetMatchAssociatesPersonDetailsRequest
-                {
-                    Associates = matchPersonDetails.Associates
-                };
-                var matchAssociatesPersonDetailsResult =
-                    await _mediator.Send(matchAssociatesDetailsRequest, cancellationToken);
+                Associates = matchPersonDetails.Associates
+            };
 
-                var reviewMatchRequest = new ReviewMatch
-                {
-                    PersonOfInterest = associationResult.Value,
-                    Match = match,
-                    MatchAssociates = matchAssociatesPersonDetailsResult.Value,
-                    MatchDetails = matchPersonDetails
-                };
+            var matchAssociatesPersonDetailsResult =
+                await _mediator.Send(matchAssociatesDetailsRequest, cancellationToken);
 
-                await _mediator.Send(reviewMatchRequest, cancellationToken);
-            }
+            var reviewMatchRequest = new ReviewMatch
+            {
+                PersonOfInterest = association,
+                Match = match,
+                MatchAssociates = matchAssociatesPersonDetailsResult.Value,
+                MatchDetails = matchPersonDetails
+            };
+
+            await _mediator.Send(reviewMatchRequest, cancellationToken);
         }
     }
 }
