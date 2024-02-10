@@ -7,4 +7,5 @@ namespace Si.IdCheck.Workers.Application.Models.Requests;
 public class GetMatchAssociatesPersonDetailsRequest : IRequest<Result<GetMatchAssociatesPersonDetailsResponse>>
 {
     public IList<AssociateDetails> Associates { get; set; }
+    public string ClientId { get; set; }
 }

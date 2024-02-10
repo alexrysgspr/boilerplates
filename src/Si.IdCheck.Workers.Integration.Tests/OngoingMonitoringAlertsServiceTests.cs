@@ -22,7 +22,7 @@ public class OngoingMonitoringAlertsServiceTests : IClassFixture<FactoryBase>
         {
             try
             {
-                await service.DoWorkAsync("006c5ba8-35f9-4345-a584-f0e488eab328", CancellationToken.None);
+                await service.DoWorkAsync("006c5ba8-35f9-4345-a584-f0e488eab328", "omg", CancellationToken.None);
             }
             catch (Exception e)
             {

@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IOngoingMonitoringAlertsService, OngoingMonitoringAlertsService>()
             .AddCloudCheck(configuration)
             .AddApplicationDependencies(configuration)
-            .AddHostedService<OngoingMonitoringAlertsWorker>()
+            //.AddHostedService<OngoingMonitoringAlertsWorker>()
             .AddHostedService<JobsWorker>()
             .AddConfigurations(configuration)
             .AddHealthChecks()

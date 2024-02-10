@@ -112,6 +112,7 @@ public static class TestUtility
 
         return new ReviewMatch
         {
+            ClientId = "omg",
             PersonOfInterest = personOfInterest,
             Match = match,
             MatchDetails = matchDetails,
@@ -229,6 +230,7 @@ public static class TestUtility
 
         return new ReviewMatch
         {
+            ClientId = "omg",
             PersonOfInterest = personOfInterest,
             Match = match,
             MatchDetails = matchDetails,
@@ -344,6 +346,7 @@ public static class TestUtility
 
         return new ReviewMatch
         {
+            ClientId = "omg",
             PersonOfInterest = personOfInterest,
             Match = match,
             MatchDetails = matchDetails,

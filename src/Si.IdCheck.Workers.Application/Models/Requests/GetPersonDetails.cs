@@ -6,4 +6,5 @@ namespace Si.IdCheck.Workers.Application.Models.Requests;
 public class GetPersonDetails : IRequest<Result<PeidLookupResponse>>
 {
     public int Peid { get; set; }
+    public string ClientId { get; set; }
 }

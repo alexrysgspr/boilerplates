@@ -5,31 +5,30 @@ using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 using Si.IdCheck.Workers.Application.Models.Requests;
 using Si.IdCheck.Workers.Application.Models.Responses;
-using Si.IdCheck.Workers.Application.Settings;
+using Si.IdCheck.Workers.Application.Reviewers;
 
 namespace Si.IdCheck.Workers.Application.Handlers;
 public class GetMatchAssociatesPersonDetailsHandler : IRequestHandler<GetMatchAssociatesPersonDetailsRequest, Result<GetMatchAssociatesPersonDetailsResponse>>
 {
     private readonly ICloudCheckApiClient _client;
-    private readonly CloudCheckSettings _cloudCheckSettings;
-    private readonly ReviewMatchSettings _reviewMatchSettingsOption;
+    private readonly IOptionsSnapshot<ReviewerSettings> _settingsFactory;
 
     public GetMatchAssociatesPersonDetailsHandler(
         ICloudCheckApiClient client,
-        IOptions<CloudCheckSettings> cloudCheckSettingsOption,
-        IOptions<ReviewMatchSettings> reviewMatchSettingsOption)
+        IOptionsSnapshot<ReviewerSettings> settingsFactory)
     {
         _client = client;
-        _cloudCheckSettings = cloudCheckSettingsOption.Value;
-        _reviewMatchSettingsOption = reviewMatchSettingsOption.Value;
+        _settingsFactory = settingsFactory;
     }
 
     public async Task<Result<GetMatchAssociatesPersonDetailsResponse>> Handle(GetMatchAssociatesPersonDetailsRequest request, CancellationToken cancellationToken)
     {
+        var settings = _settingsFactory.Get(request.ClientId);
+
         var response = new GetMatchAssociatesPersonDetailsResponse
         {
             AssociatesInRelationshipFilter = [],
-            AssociatesNotInInRelationshipFilter = []
+            AssociatesNotInRelationshipFilter = []
         };
 
         if (request.Associates == null!) return Result.Success(response);
@@ -37,9 +36,9 @@ public class GetMatchAssociatesPersonDetailsHandler : IRequestHandler<GetMatchAs
         foreach (var associate in request.Associates)
         {
             //Filter relationships to lookup only.
-            if (!string.IsNullOrEmpty(associate.Relationship) && !_reviewMatchSettingsOption.RelationshipsToFilter.Contains(associate.Relationship, StringComparer.InvariantCultureIgnoreCase))
+            if (!string.IsNullOrEmpty(associate.Relationship) && !settings.RelationshipsToFilter.Contains(associate.Relationship, StringComparer.InvariantCultureIgnoreCase))
             {
-                response.AssociatesNotInInRelationshipFilter.Add(associate);
+                response.AssociatesNotInRelationshipFilter.Add(associate);
                 continue;
             }
 
@@ -48,8 +47,8 @@ public class GetMatchAssociatesPersonDetailsHandler : IRequestHandler<GetMatchAs
                 Peid = associate.Peid
             };
 
-            var result = await _client.LookupPeidAsync(cloudCheckRequest, _cloudCheckSettings.ApiKey,
-                _cloudCheckSettings.ApiSecret);
+            var result = await _client.LookupPeidAsync(cloudCheckRequest, settings.ApiKey,
+                settings.ApiSecret);
 
             if (result.Response.Matches == null! || !result.Response.Matches.Any())
                 continue;

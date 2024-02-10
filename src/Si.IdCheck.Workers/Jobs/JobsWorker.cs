@@ -66,11 +66,13 @@ public class JobsWorker : BackgroundService
         try
         {
             var associationReference = Encoding.UTF8.GetString(message.Body);
+            var clientId = "omg";
+
             using var scope = _serviceScopeFactory.CreateScope();
 
             var ongoingMonitorAlertsService = scope.ServiceProvider.GetService<IOngoingMonitoringAlertsService>();
 
-            await ongoingMonitorAlertsService.DoWorkAsync(associationReference, _cancellationToken);
+            await ongoingMonitorAlertsService.DoWorkAsync(associationReference, clientId, _cancellationToken);
         }
         catch (Exception e)
         {

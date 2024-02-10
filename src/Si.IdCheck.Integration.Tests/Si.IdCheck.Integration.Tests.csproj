@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.CloudCheck.csproj" />
+    <ProjectReference Include="..\Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj" />
   </ItemGroup>
 
 </Project>

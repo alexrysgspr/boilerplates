@@ -7,23 +7,26 @@ namespace Si.IdCheck.Workers.Services;
 
 public interface IOngoingMonitoringAlertsService
 {
-    Task DoWorkAsync(string associationReference, CancellationToken cancellationToken);
+    Task DoWorkAsync(string associationReference, string clientId, CancellationToken cancellationToken);
 }
 
 public class OngoingMonitoringAlertsService : IOngoingMonitoringAlertsService
 {
     private readonly IMediator _mediator;
 
-    public OngoingMonitoringAlertsService(IMediator mediator)
+    public OngoingMonitoringAlertsService(
+        IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    public async Task DoWorkAsync(string associationReference, CancellationToken cancellationToken)
+    public async Task DoWorkAsync(string associationReference, string clientId, CancellationToken cancellationToken)
     {
+
         var associationRequest = new GetAssociation
         {
-            AssociationReference = associationReference
+            AssociationReference = associationReference,
+            ClientId = clientId
         };
 
         //Get association details
@@ -59,7 +62,6 @@ public class OngoingMonitoringAlertsService : IOngoingMonitoringAlertsService
             .Value
             .Response
             .Matches
-            .Where(x => x != null)
             .ToList();
 
         foreach (var matchPersonDetails in matches)

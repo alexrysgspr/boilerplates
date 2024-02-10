@@ -3,6 +3,7 @@ using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.ApiClients.CloudCheck.Constants;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
+using Si.IdCheck.Workers.Application.Reviewers;
 
 namespace Si.IdCheck.Integration.Tests;
 
@@ -10,7 +11,7 @@ namespace Si.IdCheck.Integration.Tests;
 public class CloudCheckApiClientTests
 {
     private CloudCheckApiClient _client;
-    private CloudCheckSettings _settings;
+    private ReviewerSettings _settings;
     public TestContext TestContext { get; set; }
 
 
@@ -106,17 +107,15 @@ public class CloudCheckApiClientTests
 
     private void InitializeTest()
     {
-        _settings = new CloudCheckSettings
+        _settings = new ReviewerSettings
         {
             ApiKey = TestContext.Properties["CloudCheckSettings:ApiKey"].ToString(),
             ApiSecret = TestContext.Properties["CloudCheckSettings:ApiSecret"].ToString(),
-            BaseUrl = TestContext.Properties["CloudCheckSettings:BaseUrl"].ToString(),
         };
-
 
         var httpClient = new HttpClient
         {
-            BaseAddress = new Uri(_settings.BaseUrl)
+            BaseAddress = new Uri(TestContext.Properties["CloudCheckSettings:BaseUrl"].ToString())
         };
 
         _client = new CloudCheckApiClient(httpClient);
