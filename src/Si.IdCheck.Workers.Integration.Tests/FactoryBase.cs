@@ -10,10 +10,10 @@ public class FactoryBase : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            var alertsWorker = services.Single(s => s.ImplementationType == typeof(OngoingMonitoringAlertsWorker));
-            var jobsWorker = services.Single(s => s.ImplementationType == typeof(OngoingMonitoringAlertsWorker));
+            var ongoingMonitoringAlertsWorker = services.Single(s => s.ImplementationType == typeof(OngoingMonitoringAlertsWorker));
+            var jobsWorker = services.Single(s => s.ImplementationType == typeof(JobsWorker));
             services.Remove(jobsWorker);
-            services.Remove(alertsWorker);
+            services.Remove(ongoingMonitoringAlertsWorker);
         });
     }
 }
