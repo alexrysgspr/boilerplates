@@ -39,7 +39,12 @@ public class OngoingMonitoringAlertsWorker : CronJobWorker
             using var scope = _serviceScopeFactory.CreateScope();
             var mediator = scope.ServiceProvider.GetService<IMediator>();
 
-            var getAssociationsRequest = new GetAssociations();
+            //todo: configurable clientId
+            var getAssociationsRequest = new GetAssociations
+            {
+                ClientId = "omg"
+            };
+
             isRunning = true;
 
             //Get associations

@@ -66,6 +66,7 @@ public class JobsWorker : BackgroundService
         try
         {
             var associationReference = Encoding.UTF8.GetString(message.Body);
+            //todo: configurable clientId
             var clientId = "omg";
 
             using var scope = _serviceScopeFactory.CreateScope();
