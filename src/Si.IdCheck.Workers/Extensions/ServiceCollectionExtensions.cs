@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Azure;
-using Si.IdCheck.ApiClients.CloudCheck.Extensions;
-using Si.IdCheck.Workers.Constants;
+﻿using Si.IdCheck.ApiClients.CloudCheck.Extensions;
 using Si.IdCheck.Workers.HealthChecks;
 using Si.IdCheck.Workers.Jobs;
 using Si.IdCheck.Workers.Services;
@@ -17,31 +15,12 @@ public static class ServiceCollectionExtensions
         services
             .AddOptions()
             .AddSingleton<IDateTimeService, DateTimeService>()
-            .AddScoped<IOngoingMonitoringAlertsService, OngoingMonitoringAlertsService>()
             .AddCloudCheck(configuration)
             .AddApplicationDependencies(configuration)
-            .AddHostedService<OngoingMonitoringAlertsWorker>()
             .AddHostedService<JobsWorker>()
             .AddConfigurations(configuration)
             .AddHealthChecks()
             .AddCheck<PingHealthCheck>(nameof(PingHealthCheck));
-
-        services
-            .AddAzureClients(builder =>
-            {
-                services
-                    .Configure<ServiceBusSettings>(configuration.GetSection(nameof(ServiceBusSettings)));
-
-                builder
-                    .AddServiceBusClient(configuration.GetConnectionString(ServiceBusConsts.ConnectionStringName))
-                    .WithName(ServiceBusConsts.ClientName)
-                    .ConfigureOptions(options =>
-                    {
-                        options.RetryOptions.Delay = TimeSpan.FromMilliseconds(50);
-                        options.RetryOptions.MaxDelay = TimeSpan.FromSeconds(5);
-                        options.RetryOptions.MaxRetries = 1;
-                    });
-            });
 
         return services;
     }

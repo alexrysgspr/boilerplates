@@ -46,6 +46,11 @@ public class CloudCheckApiClient : ICloudCheckApiClient
 
             throw exception;
         }
+        catch (CloudCheckApiException e)
+        {
+            Logger.Error(e, $"An error occurred while sending request for get association. Request: {queryParams}.");
+            throw;
+        }
         catch (Exception e)
         {
             Logger.Error(e, $"An error occurred while sending request for get association. Request: {queryParams}.");
@@ -75,6 +80,11 @@ public class CloudCheckApiClient : ICloudCheckApiClient
             Logger.Error(exception, "An error occurred while sending request for get associations.");
 
             throw exception;
+        }
+        catch (CloudCheckApiException e)
+        {
+            Logger.Error(e, $"An error occurred while sending request for get associations. Request: {queryParams}.");
+            throw;
         }
         catch (Exception e)
         {
@@ -118,6 +128,11 @@ public class CloudCheckApiClient : ICloudCheckApiClient
 
             throw exception;
         }
+        catch (CloudCheckApiException e)
+        {
+            Logger.Error(e, $"An error occurred while sending request for review match. Request: {JsonSerializer.Serialize(pairs)}.");
+            throw;
+        }
         catch (Exception e)
         {
             Logger.Error(e, $"An error occurred while sending request for review match. Request: {JsonSerializer.Serialize(pairs)}.");
@@ -159,6 +174,11 @@ public class CloudCheckApiClient : ICloudCheckApiClient
             Logger.Error(exception, "An error occurred while sending request for lookup peid.");
             throw exception;
         }
+        catch (CloudCheckApiException e)
+        {
+            Logger.Error(e, $"An error occurred while sending request for lookup peid. Request: {JsonSerializer.Serialize(pairs)}.");
+            throw;
+        }
         catch (Exception e)
         {
             Logger.Error(e, $"An error occurred while sending request for lookup peid. Request: {JsonSerializer.Serialize(pairs)}.");
@@ -174,7 +194,7 @@ public class CloudCheckApiClient : ICloudCheckApiClient
 
         if (response is { Verification.Error: { } })
         {
-            var error = new Exception($"CloudCheck request failed. Request: {request}. Response error code: {response.Verification.Error.Value}. Message: '{response.Verification.Message}'.");
+            var error = new CloudCheckApiException($"CloudCheck request failed. Request: {request}. Response error code: {response.Verification.Error.Value}. Message: '{response.Verification.Message}'.");
             Logger.Error(error, error.Message);
             throw error;
         }

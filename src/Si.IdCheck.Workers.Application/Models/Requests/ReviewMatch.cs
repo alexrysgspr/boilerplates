@@ -1,14 +1,34 @@
 ﻿using Ardalis.Result;
+using FluentValidation;
 using MediatR;
-using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
-using Si.IdCheck.Workers.Application.Models.Responses;
 
 namespace Si.IdCheck.Workers.Application.Models.Requests;
 public class ReviewMatch : IRequest<Result>
 {
     public string ClientId { get; set; }
-    public GetAssociationResponse PersonOfInterest { get; set; }
-    public MatchDetails MatchDetails { get; set; }
-    public Match Match { get; set; }
-    public GetMatchAssociatesPersonDetailsResponse MatchAssociates { get; set; }
+    public string AssociationReference { get; set; }
+    public string MatchId { get; set; }
+    public int? Peid { get; set; }
+    public string PersonOfInterestBirthYear { get; set; }
+}
+
+public class ReviewMatchValidator : AbstractValidator<ReviewMatch>
+{
+    public ReviewMatchValidator()
+    {
+        RuleFor(x => x.ClientId)
+            .NotEmpty();
+
+        RuleFor(x => x.AssociationReference)
+            .NotEmpty();
+
+        RuleFor(x => x.MatchId)
+            .NotEmpty();
+
+        RuleFor(x => x.Peid)
+            .NotEmpty();
+
+        RuleFor(x => x.PersonOfInterestBirthYear)
+            .NotEmpty();
+    }
 }

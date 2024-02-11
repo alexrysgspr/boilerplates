@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.Workers.Settings;
+﻿namespace Si.IdCheck.Workers.Application.Settings;
 
 public class ServiceBusSettings
 {

@@ -31,8 +31,10 @@ public static class HostExtensions
         var loggerConfiguration = new LoggerConfiguration()
             .MinimumLevel.Is((LogEventLevel)logEVentLevel)
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.Hosting", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Warning)
-            .Enrich.FromLogContext();
+            .Enrich.FromLogContext()
+            .WriteTo.Console(LogEventLevel.Information);
 
         var logSettings = configuration.GetSection(nameof(LogSettings)).Get<LogSettings>();
         var instrumentationKey = configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
@@ -49,6 +51,6 @@ public static class HostExtensions
                 logSettings.LogEventLevel);
         }
 
-        return loggerConfiguration.CreateLogger();
+        return loggerConfiguration.CreateBootstrapLogger();
     }
 }

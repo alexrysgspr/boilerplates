@@ -2,19 +2,6 @@
   "version": 1,
   "dependencies": {
     "net8.0": {
-      "Azure.Messaging.ServiceBus": {
-        "type": "Direct",
-        "requested": "[7.17.2, )",
-        "resolved": "7.17.2",
-        "contentHash": "TvmQ+qBchdxl/e5H5dtocqe/x4dsddK6vL98YYP/Ip/t5T7twBMsDV2TUbR4fP/VWOo/XU+niArIv4vRjchkgQ==",
-        "dependencies": {
-          "Azure.Core": "1.37.0",
-          "Azure.Core.Amqp": "1.3.0",
-          "Microsoft.Azure.Amqp": "2.6.4",
-          "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
-          "System.Memory.Data": "1.0.2"
-        }
-      },
       "Cronos": {
         "type": "Direct",
         "requested": "[0.8.2, )",
@@ -75,6 +62,15 @@
         "dependencies": {
           "Microsoft.ApplicationInsights": "2.20.0",
           "Serilog": "2.11.0"
+        }
+      },
+      "Serilog.Sinks.Console": {
+        "type": "Direct",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "6Jt8jl9y2ey8VV7nVEUAyjjyxjAQuvd5+qj4XYAT9CwcsvR70HHULGBeD+K2WCALFXf7CFsNQT4lON6qXcu2AA==",
+        "dependencies": {
+          "Serilog": "3.1.1"
         }
       },
       "Serilog.Sinks.File": {
@@ -148,6 +144,18 @@
           "System.Security.Cryptography.ProtectedData": "4.7.0",
           "System.Text.Json": "4.7.2",
           "System.Threading.Tasks.Extensions": "4.5.4"
+        }
+      },
+      "Azure.Messaging.ServiceBus": {
+        "type": "Transitive",
+        "resolved": "7.17.2",
+        "contentHash": "TvmQ+qBchdxl/e5H5dtocqe/x4dsddK6vL98YYP/Ip/t5T7twBMsDV2TUbR4fP/VWOo/XU+niArIv4vRjchkgQ==",
+        "dependencies": {
+          "Azure.Core": "1.37.0",
+          "Azure.Core.Amqp": "1.3.0",
+          "Microsoft.Azure.Amqp": "2.6.4",
+          "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
+          "System.Memory.Data": "1.0.2"
         }
       },
       "FluentValidation": {
@@ -1663,6 +1671,7 @@
         "dependencies": {
           "Ardalis.Result": "[7.2.0, )",
           "Ardalis.Result.FluentValidation": "[7.2.0, )",
+          "Azure.Messaging.ServiceBus": "[7.17.2, )",
           "MediatR": "[12.2.0, )",
           "Si.IdCheck.ApiClients.CloudCheck": "[1.0.0, )",
           "Si.IdCheck.AzureTableStorage": "[1.0.0, )"

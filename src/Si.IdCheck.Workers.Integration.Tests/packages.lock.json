@@ -875,6 +875,14 @@
           "Serilog": "2.11.0"
         }
       },
+      "Serilog.Sinks.Console": {
+        "type": "Transitive",
+        "resolved": "5.0.1",
+        "contentHash": "6Jt8jl9y2ey8VV7nVEUAyjjyxjAQuvd5+qj4XYAT9CwcsvR70HHULGBeD+K2WCALFXf7CFsNQT4lON6qXcu2AA==",
+        "dependencies": {
+          "Serilog": "3.1.1"
+        }
+      },
       "Serilog.Sinks.File": {
         "type": "Transitive",
         "resolved": "5.0.0",
@@ -1870,13 +1878,13 @@
       "si.idcheck.workers": {
         "type": "Project",
         "dependencies": {
-          "Azure.Messaging.ServiceBus": "[7.17.2, )",
           "Cronos": "[0.8.2, )",
           "Microsoft.Extensions.Azure": "[1.7.1, )",
           "Microsoft.Extensions.Configuration.AzureKeyVault": "[3.1.24, )",
           "Serilog": "[3.1.1, )",
           "Serilog.Extensions.Hosting": "[8.0.0, )",
           "Serilog.Sinks.ApplicationInsights": "[4.0.0, )",
+          "Serilog.Sinks.Console": "[5.0.1, )",
           "Serilog.Sinks.File": "[5.0.0, )",
           "Si.IdCheck.Workers.Application": "[1.0.0, )"
         }
@@ -1886,6 +1894,7 @@
         "dependencies": {
           "Ardalis.Result": "[7.2.0, )",
           "Ardalis.Result.FluentValidation": "[7.2.0, )",
+          "Azure.Messaging.ServiceBus": "[7.17.2, )",
           "MediatR": "[12.2.0, )",
           "Si.IdCheck.ApiClients.CloudCheck": "[1.0.0, )",
           "Si.IdCheck.AzureTableStorage": "[1.0.0, )"
