@@ -34,7 +34,6 @@ public class JobsWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        //todo: queue name
         _cancellationToken = stoppingToken;
         _processor = _azureClientFactory
             .CreateClient(ServiceBusConsts.ClientName)
@@ -102,7 +101,7 @@ public class JobsWorker : BackgroundService
                         var reviewMatch = new ReviewMatch
                         {
                             AssociationReference = reviewMatchMessage.AssociationReference,
-                            MatchId = reviewMatchMessage.AssociationReference,
+                            MatchId = reviewMatchMessage.MatchId,
                             ClientId = reviewMatchMessage.ClientId,
                             Peid = reviewMatchMessage.Peid,
                             PersonOfInterestBirthYear = reviewMatchMessage.PersonOfInterestBirthYear

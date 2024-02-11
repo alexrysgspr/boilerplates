@@ -42,9 +42,6 @@ public class OmgReviewer : IReviewer
             .Response
             .Matches ?? new List<MatchDetails>();
 
-        List<PeidLookupResponse> associatesInRelationshipFilter = [];
-        List<AssociateDetails> associatesNotInRelationshipFilter = [];
-
         var hasIssue = !int.TryParse(request.PersonOfInterestBirthYear, out var personOfInterestBirthYear);
         var notes = new List<string>();
         foreach (var matchPersonDetails in matches)
@@ -52,33 +49,16 @@ public class OmgReviewer : IReviewer
             if (hasIssue)
                 break;
 
-            if (matchPersonDetails.Associates is null or { Count: 0 }) continue;
-
-                //Get details of the match's associate
-            foreach (var associate in matchPersonDetails.Associates)
+            if (matchPersonDetails.Associates is null or { Count: 0 })
             {
-                //Filter relationships to lookup only.
-                if (!string.IsNullOrEmpty(associate.Relationship) && !_settings.RelationshipsToFilter.Contains(associate.Relationship, StringComparer.InvariantCultureIgnoreCase))
-                {
-                    associatesNotInRelationshipFilter.Add(associate);
-                    continue;
-                }
+                await ReviewMatchAsync(request, $"No associates found. AssociationReference: {request.AssociationReference}, MatchId: {request.MatchId}, Peid: {request.Peid}. RiskType: RCA.", cancellationToken);
 
-                var cloudCheckRequest = new PeidLookupRequest
-                {
-                    Peid = associate.Peid
-                };
+                return;
+            };
 
-                var result = await _client.LookupPeidAsync(cloudCheckRequest, _settings.ApiKey,
-                    _settings.ApiSecret);
+            var (associatesInRelationshipFilter, associatesNotInRelationshipFilter) =
+                await GetAssociatesAsync(matchPersonDetails);
 
-                if (result.Response.Matches is null or { Count: 0 })
-                    continue;
-
-                associatesInRelationshipFilter.Add(result);
-            }
-
-            //todo: Rules for clearing matches;
             //Check first if it matches any of the relationships to filter.
             //If associate is empty, it means we filtered the relationships and it didn't return any result, so we can clear it now.
             if (!associatesInRelationshipFilter.Any())
@@ -93,7 +73,6 @@ public class OmgReviewer : IReviewer
             }
 
             //Check relationships and join the person details in the match associates.
-
             var dobType = "Date of Birth";
 
             var associatesDetails = associatesInRelationshipFilter
@@ -111,73 +90,122 @@ public class OmgReviewer : IReviewer
                 })
                 .ToList();
 
-            foreach (var associate in associates)
-            {
-                if (_settings.RelationshipsToFilter.Contains(associate.Relationship, StringComparer.InvariantCultureIgnoreCase) &&
-                    !CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) &&
-                    !CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) &&
-                    !CloudCheckRelationshipConsts.Son.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) &&
-                    !CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    hasIssue = true;
-                    break;
-                }
+            var (issue, issueNotes) = CheckIfAssociatesHaveIssues(personOfInterestBirthYear, request.Peid, request.MatchId, request.AssociationReference, associates);
 
-                if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
-                    || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
-                            "yyyy-MM-dd",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var birthdate) && birthdate.Year > personOfInterestBirthYear)
-                    {
-                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.AssociationReference}, MatchId: {request.MatchId}, Peid: {request.Peid}. RiskType: RCA.");
-                        continue;
-                    }
+            hasIssue = issue;
 
-                    if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthYear > personOfInterestBirthYear)
-                    {
+            if (hasIssue)
+                break;
 
-                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthYear}'. AssociationReference: {request.AssociationReference}, MatchId: {request.MatchId}, Peid: {request.Peid}. RiskType: RCA.");
-                        continue;
-                    }
-
-                    hasIssue = true;
-                    break;
-                }
-
-                if (CloudCheckRelationshipConsts.Son.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) ||
-                    CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    //Condition to check if it's a child but birth year is lesser than person of interest's birth year
-                    if (DateTime.TryParseExact(associate.DateOfBirth?.Date,
-                            "yyyy-MM-dd",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var birthdate) && birthdate.Year < personOfInterestBirthYear)
-                    {
-                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {request.AssociationReference}, MatchId: {request.MatchId}, Peid: {request.Peid}. RiskType: RCA.");
-
-                        continue;
-                    }
-
-                    if (int.TryParse(associate.DateOfBirth?.Year, out var birthYear) && birthYear < personOfInterestBirthYear)
-                    {
-                        notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthYear}'. AssociationReference: {request.AssociationReference}, MatchId: {request.MatchId}, Peid: {request.Peid}. RiskType: RCA.");
-                        continue;
-                    }
-
-                    hasIssue = true;
-                    break;
-                }
-            }
+            notes.AddRange(issueNotes);
         }
 
         if (!hasIssue)
         {
             await ReviewMatchAsync(request, string.Join('\n', notes), cancellationToken);
         }
+    }
+
+    private Tuple<bool, List<string>> CheckIfAssociatesHaveIssues(int personOfInterestBirthYear, int? peid, string matchId, string associationReference, dynamic associates)
+    {
+        var hasIssue = false;
+        var notes = new List<string>();
+
+        foreach (var associate in associates)
+        {
+            var relationship = (string)associate.Relationship;
+            if (_settings.RelationshipsToFilter.Contains(relationship, StringComparer.InvariantCultureIgnoreCase) &&
+                !CloudCheckRelationshipConsts.Father.Equals(relationship, StringComparison.InvariantCultureIgnoreCase) &&
+                !CloudCheckRelationshipConsts.Mother.Equals(relationship, StringComparison.InvariantCultureIgnoreCase) &&
+                !CloudCheckRelationshipConsts.Son.Equals(relationship, StringComparison.InvariantCultureIgnoreCase) &&
+                !CloudCheckRelationshipConsts.Daughter.Equals(relationship, StringComparison.InvariantCultureIgnoreCase))
+            {
+                hasIssue = true;
+                break;
+            }
+
+            if (CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase)
+                || CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var associateBirthDate = (string)associate.DateOfBirth?.Date;
+                if (DateTime.TryParseExact(associateBirthDate,
+                        "yyyy-MM-dd",
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out var birthdate) && birthdate.Year > personOfInterestBirthYear)
+                {
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {associationReference}, MatchId: {matchId}, Peid: {peid}. RiskType: RCA.");
+                    continue;
+                }
+
+                var associateBirthYear = (string)associate.DateOfBirth?.Year;
+                if (int.TryParse(associateBirthYear, out var birthYear) && birthYear > personOfInterestBirthYear)
+                {
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthYear}'. AssociationReference: {associationReference}, MatchId: {matchId}, Peid: {peid}. RiskType: RCA.");
+                    continue;
+                }
+                hasIssue = true;
+                break;
+            }
+
+            if (CloudCheckRelationshipConsts.Son.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) ||
+            CloudCheckRelationshipConsts.Daughter.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase))
+            {
+                //Condition to check if it's a child but birth year is lesser than person of interest's birth year
+                var associateBirthDate = (string)associate.DateOfBirth?.Date;
+                if (DateTime.TryParseExact(associateBirthDate,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                        out var birthdate) && birthdate.Year < personOfInterestBirthYear)
+                {
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthdate.Year}'. AssociationReference: {associationReference}, MatchId: {matchId}, Peid: {peid}. RiskType: RCA.");
+                    continue;
+                }
+
+                var associateBirthYear = (string)associate.DateOfBirth?.Year;
+                if (int.TryParse(associateBirthYear, out var birthYear) && birthYear < personOfInterestBirthYear)
+                {
+                    notes.Add($"Person of interest's year of birth is '{personOfInterestBirthYear}' but the match's '{associate.Relationship}' year of birth is '{birthYear}'. AssociationReference: {associationReference}, MatchId: {matchId}, Peid: {peid}. RiskType: RCA.");
+                    continue;
+                }
+                hasIssue = true;
+                break;
+            }
+        }
+
+        return Tuple.Create(hasIssue, notes);
+    }
+
+    private async Task<Tuple<List<PeidLookupResponse>, List<AssociateDetails>>> GetAssociatesAsync(MatchDetails matchPersonDetails)
+    {
+        List<PeidLookupResponse> associatesInRelationshipFilter = [];
+        List<AssociateDetails> associatesNotInRelationshipFilter = [];
+        //Get details of the match's associate
+        foreach (var associate in matchPersonDetails.Associates)
+        {
+            //Filter relationships to lookup only.
+            if (!string.IsNullOrEmpty(associate.Relationship) && !_settings.RelationshipsToFilter.Contains(associate.Relationship, StringComparer.InvariantCultureIgnoreCase))
+            {
+                associatesNotInRelationshipFilter.Add(associate);
+                continue;
+            }
+
+            var cloudCheckRequest = new PeidLookupRequest
+            {
+                Peid = associate.Peid
+            };
+
+            var result = await _client.LookupPeidAsync(cloudCheckRequest, _settings.ApiKey,
+                _settings.ApiSecret);
+
+            if (result.Response.Matches is null or { Count: 0 })
+                continue;
+
+            associatesInRelationshipFilter.Add(result);
+        }
+
+        return Tuple.Create(associatesInRelationshipFilter, associatesNotInRelationshipFilter);
     }
 
     private async Task ReviewMatchAsync(ReviewMatch request, string notes, CancellationToken cancellationToken)
