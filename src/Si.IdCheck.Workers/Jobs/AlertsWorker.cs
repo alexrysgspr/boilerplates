@@ -1,7 +1,5 @@
-﻿using MediatR;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Serilog;
-using Si.IdCheck.Workers.Application.Models.Requests;
 using Si.IdCheck.Workers.Jobs.CronJob;
 using Si.IdCheck.Workers.Services;
 using Si.IdCheck.Workers.Settings;
@@ -23,54 +21,6 @@ public class AlertsWorker : CronJobWorker
 
     public override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            if (isRunning)
-                return;
-
-            using var scope = _serviceScopeFactory.CreateScope();
-            var mediator = scope.ServiceProvider.GetService<IMediator>();
-
-            var getAssociationsRequest = new GetAssociations();
-            isRunning = true;
-
-            var associations = await mediator.Send(getAssociationsRequest, cancellationToken);
-            foreach (var association in associations.Value)
-            {
-                var associationRequest = new GetAssociation
-                {
-                    AssociationReference = association.AssociationReference
-                };
-
-                var associationResult = await mediator.Send(associationRequest, cancellationToken);
-
-
-                foreach (var match in associationResult.Value.Matches)
-                {
-                    var lookupPeidRequest = new LookupPeid
-                    {
-                        Peid = match.Peid
-                    };
-
-                    var lookupPeidResult = await mediator.Send(lookupPeidRequest, cancellationToken);
-
-                    var reviewMatchRequest = new ReviewMatch
-                    {
-                        Association = associationResult.Value,
-                        Peid = lookupPeidResult,
-                        Match = match
-                    };
-
-                    await mediator.Send(reviewMatchRequest, cancellationToken);
-                }
-            }
-
-        }
-        catch (Exception e)
-        {
-            await Task.Delay(3000, cancellationToken);
-            isRunning = false;
-            Logger.Error(e, "An error occurred while running AlertsWorker");
-        }
+        
     }
 }

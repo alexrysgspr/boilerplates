@@ -18,8 +18,4 @@
 		<PackageReference Include="Cronos" Version="0.8.2" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj" />
-	</ItemGroup>
-
 </Project>
