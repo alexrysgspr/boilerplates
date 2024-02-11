@@ -45,8 +45,13 @@ public class OmgReviewer : IReviewer
         List<PeidLookupResponse> associatesInRelationshipFilter = [];
         List<AssociateDetails> associatesNotInRelationshipFilter = [];
 
+        var hasIssue = !int.TryParse(request.PersonOfInterestBirthYear, out var personOfInterestBirthYear);
+        var notes = new List<string>();
         foreach (var matchPersonDetails in matches)
         {
+            if (hasIssue)
+                break;
+
             if (matchPersonDetails.Associates is null or { Count: 0 }) continue;
 
                 //Get details of the match's associate
@@ -106,17 +111,8 @@ public class OmgReviewer : IReviewer
                 })
                 .ToList();
 
-            var hasIssue = !int.TryParse(request.PersonOfInterestBirthYear, out var personOfInterestBirthYear);
-
-            var notes = new List<string>();
             foreach (var associate in associates)
             {
-                //if true exit loop.
-                if (hasIssue)
-                {
-                    break;
-                }
-
                 if (_settings.RelationshipsToFilter.Contains(associate.Relationship, StringComparer.InvariantCultureIgnoreCase) &&
                     !CloudCheckRelationshipConsts.Father.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) &&
                     !CloudCheckRelationshipConsts.Mother.Equals(associate.Relationship, StringComparison.InvariantCultureIgnoreCase) &&
@@ -176,11 +172,11 @@ public class OmgReviewer : IReviewer
                     break;
                 }
             }
+        }
 
-            if (!hasIssue)
-            {
-                await ReviewMatchAsync(request, string.Join('\n', notes), cancellationToken);
-            }
+        if (!hasIssue)
+        {
+            await ReviewMatchAsync(request, string.Join('\n', notes), cancellationToken);
         }
     }
 
