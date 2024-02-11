@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Workers.Applicat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Si.IdCheck.AzureTableStorage", "Si.IdCheck.TableStorage\Si.IdCheck.AzureTableStorage.csproj", "{4DBEBAB4-4182-46E5-97A7-AC77E6440C72}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.CloudCheck", "Si.IdCheck.ApiClients.Cloudcheck\Si.IdCheck.ApiClients.CloudCheck.csproj", "{F2270A4D-D9BC-4758-AF6A-6958B3DEB62E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.CloudCheck", "Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.CloudCheck.csproj", "{F2270A4D-D9BC-4758-AF6A-6958B3DEB62E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
