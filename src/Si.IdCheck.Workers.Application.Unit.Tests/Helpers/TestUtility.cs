@@ -1,7 +1,7 @@
 ﻿using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
 
-namespace Si.IdCheck.Unit.Tests.Helpers;
+namespace Si.IdCheck.Workers.Application.Unit.Tests.Helpers;
 public static class TestUtility
 {
     public static AssociateDetails CreateAssociate(string relationship)

@@ -1,12 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Polly;
+using Si.IdCheck.ApiClients.CloudCheck;
 
 // ReSharper disable CheckNamespace
-namespace Si.IdCheck.ApiClients.CloudCheck.Extensions;
+namespace Microsoft.Extensions.DependencyInjection;
 // ReSharper restore CheckNamespace
-
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCloudCheck(this IServiceCollection services, IConfiguration configuration)

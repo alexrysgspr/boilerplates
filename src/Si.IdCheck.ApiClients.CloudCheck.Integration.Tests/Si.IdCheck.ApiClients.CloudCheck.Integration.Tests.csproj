@@ -22,5 +22,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Si.IdCheck.Workers.Application\Si.IdCheck.Workers.Application.csproj" />
   </ItemGroup>
-
 </Project>

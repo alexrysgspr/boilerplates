@@ -2017,6 +2017,7 @@
           "Ardalis.Result.FluentValidation": "[7.2.0, )",
           "Azure.Messaging.ServiceBus": "[7.17.2, )",
           "MediatR": "[12.2.0, )",
+          "Microsoft.Extensions.Configuration.Abstractions": "[8.0.0, )",
           "Si.IdCheck.ApiClients.CloudCheck": "[1.0.0, )",
           "Si.IdCheck.AzureTableStorage": "[1.0.0, )"
         }

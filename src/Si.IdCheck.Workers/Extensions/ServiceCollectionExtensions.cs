@@ -1,5 +1,4 @@
-﻿using Si.IdCheck.ApiClients.CloudCheck.Extensions;
-using Si.IdCheck.Workers.HealthChecks;
+﻿using Si.IdCheck.Workers.HealthChecks;
 using Si.IdCheck.Workers.Jobs;
 using Si.IdCheck.Workers.Services;
 using Si.IdCheck.Workers.Settings;

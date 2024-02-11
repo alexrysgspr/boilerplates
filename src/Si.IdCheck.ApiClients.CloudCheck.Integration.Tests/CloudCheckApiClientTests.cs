@@ -1,11 +1,10 @@
-using System.Text.Json;
-using Si.IdCheck.ApiClients.CloudCheck;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Si.IdCheck.ApiClients.CloudCheck.Constants;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Reviewers;
 
-namespace Si.IdCheck.Integration.Tests;
+namespace Si.IdCheck.ApiClients.CloudCheck.Integration.Tests;
 
 [TestClass]
 public class CloudCheckApiClientTests

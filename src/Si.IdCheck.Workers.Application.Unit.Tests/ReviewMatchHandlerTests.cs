@@ -5,12 +5,12 @@ using Si.IdCheck.ApiClients.CloudCheck.Constants;
 using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 using Si.IdCheck.AzureTableStorage;
 using Si.IdCheck.AzureTableStorage.Models;
-using Si.IdCheck.Unit.Tests.Helpers;
 using Si.IdCheck.Workers.Application.Handlers;
 using Si.IdCheck.Workers.Application.Reviewers;
 using Si.IdCheck.Workers.Application.Reviewers.Omg;
+using Si.IdCheck.Workers.Application.Unit.Tests.Helpers;
 
-namespace Si.IdCheck.Unit.Tests;
+namespace Si.IdCheck.Workers.Application.Unit.Tests;
 
 public class ReviewMatchHandlerTests
 {
