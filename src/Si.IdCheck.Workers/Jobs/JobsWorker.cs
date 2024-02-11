@@ -1,15 +1,14 @@
 ﻿using System.Text.Json;
-using System.Threading;
 using Azure.Messaging.ServiceBus;
 using MediatR;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Si.IdCheck.ApiClients.CloudCheck;
 using Si.IdCheck.Workers.Application.Models.Requests;
 using Si.IdCheck.Workers.Application.ServiceBus;
 using Si.IdCheck.Workers.Application.Settings;
 using ILogger = Serilog.ILogger;
+using IResult = Ardalis.Result.IResult;
 
 namespace Si.IdCheck.Workers.Jobs;
 
@@ -82,14 +81,8 @@ public class JobsWorker : BackgroundService
                         };
 
                         var getAssociationsResponse = await mediator.Send(getAssociationsRequest, _cancellationToken);
-                        if (!getAssociationsResponse.IsSuccess)
-                        {
-                            throw new Exception(
-                                $"Invalid GetAssociationsHandler request. {JsonSerializer.Serialize(getAssociationsResponse.Errors)}");
-                        }
-
+                        ThrowIfFailed(getAssociationsResponse);
                         break;
-
                     case ServiceBusConsts.OngoingMonitoringAlerts.MessageTypes.GetAssociation:
                         var getAssociation = message.Body.ToObjectFromJson<OngoingMonitoringAlertMessages.GetAssociation>();
                         var getAssociationRequest = new GetAssociation
@@ -100,11 +93,7 @@ public class JobsWorker : BackgroundService
 
                         var getAssociationResponse = await mediator.Send(getAssociationRequest, _cancellationToken);
 
-                        if (!getAssociationResponse.IsSuccess)
-                        {
-                            throw new Exception(
-                                $"Invalid GetAssociationHandler request. {JsonSerializer.Serialize(getAssociationResponse.Errors)}");
-                        }
+                        ThrowIfFailed(getAssociationResponse);
                         break;
                     case ServiceBusConsts.OngoingMonitoringAlerts.MessageTypes.ReviewMatch:
                         var reviewMatchMessage =
@@ -120,11 +109,8 @@ public class JobsWorker : BackgroundService
                         };
 
                         var reviewMatchResponse = await mediator.Send(reviewMatch, _cancellationToken);
-                        if (!reviewMatchResponse.IsSuccess)
-                        {
-                            throw new Exception(
-                                $"Invalid GetAssociationHandler request. {JsonSerializer.Serialize(reviewMatchResponse.Errors)}");
-                        }
+
+                        ThrowIfFailed(reviewMatchResponse);
                         break;
                     default:
                         throw new Exception($"Invalid message subject: {subject}.");
@@ -135,6 +121,15 @@ public class JobsWorker : BackgroundService
         {
             await processMessageEvent.DeadLetterMessageAsync(message, cancellationToken: _cancellationToken);
             Logger.Error(e, $"An error occurred while processing message {message.MessageId}. Message subject: '{message.Subject}'. Error: {e.Message}");
+        }
+    }
+
+    private static void ThrowIfFailed(IResult result)
+    {
+        if (result.ValidationErrors.Any())
+        {
+            throw new Exception(
+                $"Invalid ReviewMatch request. {JsonSerializer.Serialize(result.ValidationErrors)}");
         }
     }
 

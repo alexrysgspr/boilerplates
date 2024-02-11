@@ -27,8 +27,5 @@ public class ReviewMatchValidator : AbstractValidator<ReviewMatch>
 
         RuleFor(x => x.Peid)
             .NotEmpty();
-
-        RuleFor(x => x.PersonOfInterestBirthYear)
-            .NotEmpty();
     }
 }
