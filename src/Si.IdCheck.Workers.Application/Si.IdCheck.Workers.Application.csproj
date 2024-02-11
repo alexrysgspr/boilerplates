@@ -12,6 +12,7 @@
 		<PackageReference Include="Ardalis.Result.FluentValidation" Version="7.2.0" />
 		<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.2" />
 	</ItemGroup>
+
 	<ItemGroup>
 	  <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.CloudCheck.csproj" />
 	  <ProjectReference Include="..\Si.IdCheck.TableStorage\Si.IdCheck.AzureTableStorage.csproj" />
