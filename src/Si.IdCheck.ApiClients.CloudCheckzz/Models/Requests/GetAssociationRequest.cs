@@ -1,6 +1,6 @@
-﻿using Si.IdCheck.ApiClients.CloudCheck.Helpers;
+﻿using Si.IdCheck.ApiClients.CloudCheckzz.Helpers;
 
-namespace Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+namespace Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
 public class GetAssociationRequest
 {
     /// <summary>

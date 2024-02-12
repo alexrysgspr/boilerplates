@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Moq;
-using Si.IdCheck.ApiClients.CloudCheck;
-using Si.IdCheck.ApiClients.CloudCheck.Constants;
-using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheckzz;
+using Si.IdCheck.ApiClients.CloudCheckzz.Constants;
+using Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
 using Si.IdCheck.AzureTableStorage;
 using Si.IdCheck.AzureTableStorage.Models;
 using Si.IdCheck.Workers.Application.Handlers;

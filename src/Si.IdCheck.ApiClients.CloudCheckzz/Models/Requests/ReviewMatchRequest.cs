@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+namespace Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
 
 public class ReviewMatchRequest : IParameterBuilder, IPostRequestBuilder
 {

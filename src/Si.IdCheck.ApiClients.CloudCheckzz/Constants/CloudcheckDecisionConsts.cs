@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.CloudCheck.Constants;
+﻿namespace Si.IdCheck.ApiClients.CloudCheckzz.Constants;
 public static class CloudCheckDecisionConsts
 {
     /// <summary>

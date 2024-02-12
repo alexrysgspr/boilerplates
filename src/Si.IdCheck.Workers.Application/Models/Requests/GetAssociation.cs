@@ -2,7 +2,7 @@
 using Ardalis.Result;
 using FluentValidation;
 using MediatR;
-using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheckzz.Models.Responses;
 
 namespace Si.IdCheck.Workers.Application.Models.Requests;
 public class GetAssociation : IRequest<Result<GetAssociationResponse>>

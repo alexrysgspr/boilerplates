@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.CloudCheck.csproj" />
+	  <ProjectReference Include="..\Si.IdCheck.ApiClients.CloudCheckzz\Si.IdCheck.ApiClients.CloudCheckzz.csproj" />
 	  <ProjectReference Include="..\Si.IdCheck.TableStorage\Si.IdCheck.AzureTableStorage.csproj" />
 	</ItemGroup>
 

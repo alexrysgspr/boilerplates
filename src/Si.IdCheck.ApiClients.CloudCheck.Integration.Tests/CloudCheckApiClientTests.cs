@@ -1,7 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Si.IdCheck.ApiClients.CloudCheck.Constants;
-using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
-using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheckzz;
+using Si.IdCheck.ApiClients.CloudCheckzz.Constants;
+using Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheckzz.Models.Responses;
 using Si.IdCheck.Workers.Application.Reviewers;
 
 namespace Si.IdCheck.ApiClients.CloudCheck.Integration.Tests;

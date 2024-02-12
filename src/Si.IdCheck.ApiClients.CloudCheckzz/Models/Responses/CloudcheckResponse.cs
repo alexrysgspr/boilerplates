@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
+﻿namespace Si.IdCheck.ApiClients.CloudCheckzz.Models.Responses;
 public class CloudCheckResponse
 {
     public Verification Verification { get; set; }
