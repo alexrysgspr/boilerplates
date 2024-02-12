@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
-using Si.IdCheck.ApiClients.CloudCheckzz;
+using Si.IdCheck.ApiClients.CloudCheck;
 
 // ReSharper disable CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;

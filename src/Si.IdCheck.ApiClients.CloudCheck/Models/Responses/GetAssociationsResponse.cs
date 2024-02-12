@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.CloudCheckzz.Models.Responses;
+﻿namespace Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 public class GetAssociationsResponse
 {
     public List<Association> Associations { get; set; }

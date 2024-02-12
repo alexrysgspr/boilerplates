@@ -42,7 +42,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.Cloud
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.Workers.Application.Unit.Tests", "Si.IdCheck.Workers.Application.Unit.Tests\Si.IdCheck.Workers.Application.Unit.Tests.csproj", "{05D0F6D2-89E6-450D-93E9-18FD29E06433}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.CloudCheckzz", "Si.IdCheck.ApiClients.CloudCheckzz\Si.IdCheck.ApiClients.CloudCheckzz.csproj", "{878CFC37-65AE-4F32-A86A-AF6A494FB5CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Si.IdCheck.ApiClients.CloudCheck", "Si.IdCheck.ApiClients.CloudCheck\Si.IdCheck.ApiClients.CloudCheck.csproj", "{096C95AB-D646-466F-AA53-23D813A31F52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,10 +78,10 @@ Global
 		{05D0F6D2-89E6-450D-93E9-18FD29E06433}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05D0F6D2-89E6-450D-93E9-18FD29E06433}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05D0F6D2-89E6-450D-93E9-18FD29E06433}.Release|Any CPU.Build.0 = Release|Any CPU
-		{878CFC37-65AE-4F32-A86A-AF6A494FB5CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{878CFC37-65AE-4F32-A86A-AF6A494FB5CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{878CFC37-65AE-4F32-A86A-AF6A494FB5CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{878CFC37-65AE-4F32-A86A-AF6A494FB5CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{096C95AB-D646-466F-AA53-23D813A31F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{096C95AB-D646-466F-AA53-23D813A31F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{096C95AB-D646-466F-AA53-23D813A31F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{096C95AB-D646-466F-AA53-23D813A31F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,7 +93,7 @@ Global
 		{48B2D4A1-098F-4634-86E7-348F17CC32BE} = {C754F17E-AE29-46AF-9832-B90664AC3B03}
 		{B75F945A-9608-4877-B8F3-DB4211959386} = {C754F17E-AE29-46AF-9832-B90664AC3B03}
 		{05D0F6D2-89E6-450D-93E9-18FD29E06433} = {C754F17E-AE29-46AF-9832-B90664AC3B03}
-		{878CFC37-65AE-4F32-A86A-AF6A494FB5CF} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
+		{096C95AB-D646-466F-AA53-23D813A31F52} = {7797B848-79A9-44DE-A6B9-D678AF958C4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A85ACA9F-CB9B-4BEB-8A2C-373D8756283E}

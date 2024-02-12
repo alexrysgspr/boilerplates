@@ -1,9 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 
-namespace Si.IdCheck.ApiClients.CloudCheckzz.Helpers;
+namespace Si.IdCheck.ApiClients.CloudCheck.Helpers;
 public static class CloudCheckHelpers
 {
     public static string CreateNonce()

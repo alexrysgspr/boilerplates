@@ -5,10 +5,10 @@ using Si.IdCheck.Workers.Application.Models.Requests;
 using System.Globalization;
 using System.Text.Json;
 using Serilog;
-using Si.IdCheck.ApiClients.CloudCheckzz;
-using Si.IdCheck.ApiClients.CloudCheckzz.Constants;
-using Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
-using Si.IdCheck.ApiClients.CloudCheckzz.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheck;
+using Si.IdCheck.ApiClients.CloudCheck.Constants;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 
 namespace Si.IdCheck.Workers.Application.Reviewers.Omg;
 public class OmgReviewer : IReviewer

@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.CloudCheckzz.Constants;
+﻿namespace Si.IdCheck.ApiClients.CloudCheck.Constants;
 public enum CloudCheckErrorCodeEnum
 {
     AccessKeyMissingOrIncorrect = 101,

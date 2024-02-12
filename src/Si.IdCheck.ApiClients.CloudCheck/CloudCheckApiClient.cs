@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using Serilog;
-using Si.IdCheck.ApiClients.CloudCheckzz.Helpers;
-using Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
-using Si.IdCheck.ApiClients.CloudCheckzz.Models.Responses;
+using Si.IdCheck.ApiClients.CloudCheck.Helpers;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 
-namespace Si.IdCheck.ApiClients.CloudCheckzz;
+namespace Si.IdCheck.ApiClients.CloudCheck;
 
 public interface ICloudCheckApiClient
 {

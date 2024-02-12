@@ -1,4 +1,4 @@
-﻿namespace Si.IdCheck.ApiClients.CloudCheckzz.Models.Requests;
+﻿namespace Si.IdCheck.ApiClients.CloudCheck.Models.Requests;
 
 public class CloudCheckRequest : CloudCheckPostRequestBase
 {

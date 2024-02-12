@@ -1,4 +1,4 @@
-﻿using Si.IdCheck.ApiClients.CloudCheckzz.Models.Responses;
+﻿using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.Models.Requests;
 
 namespace Si.IdCheck.Workers.Application.Unit.Tests.Helpers;
