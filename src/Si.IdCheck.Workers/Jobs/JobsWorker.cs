@@ -40,7 +40,7 @@ public class JobsWorker : BackgroundService
             .CreateProcessor(_serviceBusSettings.OngoingMonitoringAlertsQueueName, new ServiceBusProcessorOptions
             {
                 MaxAutoLockRenewalDuration = TimeSpan.FromMinutes(5),
-                MaxConcurrentCalls = 10,
+                MaxConcurrentCalls = 1,
                 AutoCompleteMessages = true
             });
 
