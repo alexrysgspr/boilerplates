@@ -59,6 +59,11 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
             .Where(match => settings.RelationshipTypes.Contains(match.Type, StringComparer.InvariantCultureIgnoreCase) && settings.RiskTypes.Any(y => match.RiskTypes.Select(rt => rt.Code).Contains(y, StringComparer.InvariantCultureIgnoreCase)))
             .ToList();
 
+        if (association.Matches is null or { Count: 0 })
+        {
+            return Result.Success(association);
+        }
+
         Logger.Information($"Processing association with id '{request.AssociationReference}', match count: {association.Matches.Count}.");
 
         var concurrentWrites = 100;
