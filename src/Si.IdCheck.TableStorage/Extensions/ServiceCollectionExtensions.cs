@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
             .AddAzureClients(builder =>
             {
                 builder
-                    .AddTableServiceClient(configuration.GetConnectionString("StorageAccount"));
+                    .AddTableServiceClient(configuration.GetConnectionString(TableStorageConsts.ConnectionStringName));
             });
 
         services
