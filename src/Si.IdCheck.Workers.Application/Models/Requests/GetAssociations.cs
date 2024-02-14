@@ -5,7 +5,7 @@ using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 using Si.IdCheck.Workers.Application.ServiceBus;
 
 namespace Si.IdCheck.Workers.Application.Models.Requests;
-public class GetAssociations : IRequest<Result>
+public class GetAssociations : IRequest<Result<List<Association>>>
 {
     public string ClientId { get; set; }
 }

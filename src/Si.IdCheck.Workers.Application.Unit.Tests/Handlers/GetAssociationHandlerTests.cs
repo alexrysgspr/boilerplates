@@ -14,7 +14,7 @@ using Si.IdCheck.Workers.Application.Settings;
 using Si.IdCheck.Workers.Application.Unit.Tests.Helpers;
 using Si.IdCheck.Workers.Application.Unit.Tests.Mocks;
 
-namespace Si.IdCheck.Workers.Application.Unit.Tests;
+namespace Si.IdCheck.Workers.Application.Unit.Tests.Handlers;
 public class GetAssociationHandlerTests
 {
     private readonly Mock<ICloudCheckApiClient> _mockClient;
@@ -57,7 +57,7 @@ public class GetAssociationHandlerTests
 
         _mockAzureClientFactoryServiceBus
             .Setup(x => x.CreateClient(It.IsAny<string>()))
-            .Returns((() => new MockServiceBusClient()));
+            .Returns(() => new MockServiceBusClient());
 
         _mockServiceBusSettings = Options.Create(new ServiceBusSettings());
     }
@@ -107,6 +107,7 @@ public class GetAssociationHandlerTests
             .Returns(() =>
                 Task.FromResult(new GetAssociationResponse
                 {
+                    AssociationReference = personOfInterest.AssociationReference,
                     Matches = [match1, match2, match3]
                 }));
 

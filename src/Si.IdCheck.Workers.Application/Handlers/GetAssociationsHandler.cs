@@ -15,7 +15,7 @@ using Si.IdCheck.Workers.Application.ServiceBus;
 using Si.IdCheck.Workers.Application.Settings;
 
 namespace Si.IdCheck.Workers.Application.Handlers;
-public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result>
+public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result<List<Association>>>
 {
     private readonly ICloudCheckApiClient _client;
     private readonly GetAssociationsSettings _getAssociationsSettings;
@@ -37,7 +37,7 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result>
             .CreateSender(serviceBusSettingsOptions.Value.OngoingMonitoringAlertsQueueName);
     }
 
-    public async Task<Result> Handle(GetAssociations request, CancellationToken cancellationToken)
+    public async Task<Result<List<Association>>> Handle(GetAssociations request, CancellationToken cancellationToken)
     {
         var validator = new GetAssociationsValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -98,6 +98,6 @@ public class GetAssociationsHandler : IRequestHandler<GetAssociations, Result>
             await Task.WhenAll(tasks);
         }
 
-        return Result.Success();
+        return Result.Success(associations);
     }
 }

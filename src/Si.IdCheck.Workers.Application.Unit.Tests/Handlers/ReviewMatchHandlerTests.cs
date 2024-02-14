@@ -10,7 +10,7 @@ using Si.IdCheck.Workers.Application.Reviewers;
 using Si.IdCheck.Workers.Application.Reviewers.Omg;
 using Si.IdCheck.Workers.Application.Unit.Tests.Helpers;
 
-namespace Si.IdCheck.Workers.Application.Unit.Tests;
+namespace Si.IdCheck.Workers.Application.Unit.Tests.Handlers;
 
 public class ReviewMatchHandlerTests
 {
