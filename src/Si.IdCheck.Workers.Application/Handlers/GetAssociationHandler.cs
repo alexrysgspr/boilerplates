@@ -73,16 +73,10 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
             var tasks = association.Matches
                 .Skip(i * concurrentWrites)
                 .Take(concurrentWrites)
-                .Select(x => serviceBusClient.SendMessageAsync(ServiceBusHelpers.CreateMessage(
-                        new OngoingMonitoringAlertMessages.ReviewMatch
-                        {
-                            AssociationReference = association.AssociationReference,
-                            Peid = x.Peid,
-                            ClientId = request.ClientId,
-                            MatchId = x.MatchId,
-                            PersonOfInterestBirthYear = association.PersonDetail?.BirthYear,
-                            RiskTypes = x.RiskTypes
-                        }, ServiceBusConsts.OngoingMonitoringAlerts.MessageTypes.ReviewMatch), cancellationToken))
+                .Select(x => serviceBusClient.SendMessageAsync(
+                    ServiceBusHelpers
+                    .CreateMessage(association
+                            .ToServiceBusMessage(x, request.ClientId), ServiceBusConsts.OngoingMonitoringAlerts.MessageTypes.ReviewMatch), cancellationToken))
                 .ToList();
 
             await Task.WhenAll(tasks);

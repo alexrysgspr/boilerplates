@@ -74,21 +74,15 @@ public class JobsWorker : BackgroundService
                 {
                     case ServiceBusConsts.OngoingMonitoringAlerts.MessageTypes.GetAssociations:
                         var getAssociations = message.Body.ToObjectFromJson<OngoingMonitoringAlertMessages.GetAssociations>();
-                        var getAssociationsRequest = new GetAssociations
-                        {
-                            ClientId = getAssociations.ClientId
-                        };
+                        var getAssociationsRequest = getAssociations.ToRequest();
 
                         var getAssociationsResponse = await mediator.Send(getAssociationsRequest, _cancellationToken);
+
                         ThrowIfFailed(getAssociationsResponse);
                         break;
                     case ServiceBusConsts.OngoingMonitoringAlerts.MessageTypes.GetAssociation:
                         var getAssociation = message.Body.ToObjectFromJson<OngoingMonitoringAlertMessages.GetAssociation>();
-                        var getAssociationRequest = new GetAssociation
-                        {
-                            AssociationReference = getAssociation.AssociationReference,
-                            ClientId = getAssociation.ClientId
-                        };
+                        var getAssociationRequest = getAssociation.ToRequest();
 
                         var getAssociationResponse = await mediator.Send(getAssociationRequest, _cancellationToken);
 
@@ -98,17 +92,9 @@ public class JobsWorker : BackgroundService
                         var reviewMatchMessage =
                             message.Body.ToObjectFromJson<OngoingMonitoringAlertMessages.ReviewMatch>();
 
-                        var reviewMatch = new ReviewMatch
-                        {
-                            AssociationReference = reviewMatchMessage.AssociationReference,
-                            MatchId = reviewMatchMessage.MatchId,
-                            ClientId = reviewMatchMessage.ClientId,
-                            Peid = reviewMatchMessage.Peid,
-                            PersonOfInterestBirthYear = reviewMatchMessage.PersonOfInterestBirthYear,
-                            RiskTypes = reviewMatchMessage.RiskTypes
-                        };
+                        var reviewMatchRequest = reviewMatchMessage.ToRequest();
 
-                        var reviewMatchResponse = await mediator.Send(reviewMatch, _cancellationToken);
+                        var reviewMatchResponse = await mediator.Send(reviewMatchRequest, _cancellationToken);
 
                         ThrowIfFailed(reviewMatchResponse);
                         break;
