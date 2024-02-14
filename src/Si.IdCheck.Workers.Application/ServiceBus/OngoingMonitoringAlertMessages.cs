@@ -1,4 +1,6 @@
-﻿namespace Si.IdCheck.Workers.Application.ServiceBus;
+﻿using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
+
+namespace Si.IdCheck.Workers.Application.ServiceBus;
 public static class OngoingMonitoringAlertMessages
 {
     public abstract class BaseAlertOngoingMonitoringAlertMessage
@@ -18,5 +20,6 @@ public static class OngoingMonitoringAlertMessages
         public string MatchId { get; set; }
         public int Peid { get; set; }
         public string PersonOfInterestBirthYear { get; set; }
+        public List<RiskType> RiskTypes { get; set; }
     }
 }

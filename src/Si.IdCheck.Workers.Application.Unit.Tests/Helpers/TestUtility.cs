@@ -45,14 +45,15 @@ public static class TestUtility
         };
     }
 
-    public static Match CreateMatch(int peid, string birthYear)
+    public static Match CreateMatch(int peid, string birthYear, List<RiskType> riskTypes = null, string type = "Relationship")
     {
         return new Match
         {
-            Type = "Person",
+            Type = type,
             MatchId = Guid.NewGuid().ToString(),
             Peid = peid,
             BirthDates = [birthYear],
+            RiskTypes = riskTypes,
         };
     }
     

@@ -18,20 +18,21 @@ namespace Si.IdCheck.Workers.Application.Handlers;
 public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetAssociationResponse>>
 {
     private readonly ICloudCheckApiClient _client;
-    private readonly IOptionsSnapshot<ReviewerSettings> _settingsFactory;
-    private readonly ServiceBusSender _serviceBusClient;
+    private readonly IOptionsFactory<ReviewerSettings> _settingsFactory;
     private static readonly ILogger Logger = Log.ForContext<GetAssociationHandler>();
+    private readonly IAzureClientFactory<ServiceBusClient> _azureClientFactory;
+    private readonly ServiceBusSettings _serviceBusSettings;
+
     public GetAssociationHandler(
         ICloudCheckApiClient client,
-        IOptionsSnapshot<ReviewerSettings> settingsFactory,
+        IOptionsFactory<ReviewerSettings> settingsFactory,
         IAzureClientFactory<ServiceBusClient> azureClientFactory,
         IOptions<ServiceBusSettings> serviceBusSettingsOptions)
     {
         _settingsFactory = settingsFactory;
         _client = client;
-        _serviceBusClient = azureClientFactory
-            .CreateClient(ServiceBusConsts.ClientName)
-            .CreateSender(serviceBusSettingsOptions.Value.OngoingMonitoringAlertsQueueName);
+        _azureClientFactory = azureClientFactory;
+        _serviceBusSettings = serviceBusSettingsOptions.Value;
     }
 
     public async Task<Result<GetAssociationResponse>> Handle(GetAssociation request, CancellationToken cancellationToken)
@@ -44,7 +45,7 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
             return Result.Invalid(validationResult.AsErrors());
         }
 
-        var settings = _settingsFactory.Get(request.ClientId);
+        var settings = _settingsFactory.Create(request.ClientId);
         var cloudCheckRequest = new GetAssociationRequest
         {
             AssociationReference = request.AssociationReference
@@ -55,7 +56,7 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
 
         association.Matches = association
             .Matches
-            .Where(match => settings.RelationshipTypes.Contains(match.Type, StringComparer.InvariantCultureIgnoreCase) && !settings.RiskTypes.All(y => match.RiskTypes.Select(rt => rt.Code).Contains(y, StringComparer.InvariantCultureIgnoreCase)))
+            .Where(match => settings.RelationshipTypes.Contains(match.Type, StringComparer.InvariantCultureIgnoreCase) && settings.RiskTypes.Any(y => match.RiskTypes.Select(rt => rt.Code).Contains(y, StringComparer.InvariantCultureIgnoreCase)))
             .ToList();
 
         Logger.Information($"Processing association with id '{request.AssociationReference}', match count: {association.Matches.Count}.");
@@ -63,25 +64,30 @@ public class GetAssociationHandler : IRequestHandler<GetAssociation, Result<GetA
         var concurrentWrites = 100;
         var pageCount = PagingHelpers.GetPageCount(association.Matches.Count, concurrentWrites);
 
+        var serviceBusClient = _azureClientFactory
+            .CreateClient(ServiceBusConsts.ClientName)
+            .CreateSender(_serviceBusSettings.OngoingMonitoringAlertsQueueName);
+
         for (var i = 0; i < pageCount; i++)
         {
             var tasks = association.Matches
                 .Skip(i * concurrentWrites)
                 .Take(concurrentWrites)
-                .Select(x => _serviceBusClient.SendMessageAsync(ServiceBusHelpers.CreateMessage(
+                .Select(x => serviceBusClient.SendMessageAsync(ServiceBusHelpers.CreateMessage(
                         new OngoingMonitoringAlertMessages.ReviewMatch
                         {
                             AssociationReference = association.AssociationReference,
                             Peid = x.Peid,
                             ClientId = request.ClientId,
                             MatchId = x.MatchId,
-                            PersonOfInterestBirthYear = association.PersonDetail?.BirthYear
+                            PersonOfInterestBirthYear = association.PersonDetail?.BirthYear,
+                            RiskTypes = x.RiskTypes
                         }, ServiceBusConsts.OngoingMonitoringAlerts.MessageTypes.ReviewMatch), cancellationToken))
                 .ToList();
 
             await Task.WhenAll(tasks);
         }
 
-        return Result.Success();
+        return Result.Success(association);
     }
 }

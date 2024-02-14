@@ -104,7 +104,8 @@ public class JobsWorker : BackgroundService
                             MatchId = reviewMatchMessage.MatchId,
                             ClientId = reviewMatchMessage.ClientId,
                             Peid = reviewMatchMessage.Peid,
-                            PersonOfInterestBirthYear = reviewMatchMessage.PersonOfInterestBirthYear
+                            PersonOfInterestBirthYear = reviewMatchMessage.PersonOfInterestBirthYear,
+                            RiskTypes = reviewMatchMessage.RiskTypes
                         };
 
                         var reviewMatchResponse = await mediator.Send(reviewMatch, _cancellationToken);

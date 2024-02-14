@@ -40,7 +40,7 @@ public class OmgReviewer : IReviewer
 
         var matches = matchDetailsResult
             .Response
-            .Matches ?? new List<MatchDetails>();
+            .Matches;
 
         var hasIssue = !int.TryParse(request.PersonOfInterestBirthYear, out var personOfInterestBirthYear);
         var notes = new List<string>();
@@ -67,7 +67,7 @@ public class OmgReviewer : IReviewer
                 .Select(x => new { x.Peid, x.Relationship, x.Description1 })
                 .ToList();
 
-                await ReviewMatchAsync(request, $"No associates found in the relationship filter. Associates: {JsonSerializer.Serialize(associatesNotInFilter)}, AssociationReference: {request.AssociationReference}, MatchId: {request.MatchId}, Peid: {request.Peid}. RiskType: RCA.", cancellationToken);
+                await ReviewMatchAsync(request, $"No associates found in the relationship filter. Associates: {JsonSerializer.Serialize(associatesNotInFilter)}, AssociationReference: {request.AssociationReference}, MatchId: {request.MatchId}, Peid: {request.Peid}. RiskTypes: [{string.Join(',', request.RiskTypes)}].", cancellationToken);
 
                 return;
             }

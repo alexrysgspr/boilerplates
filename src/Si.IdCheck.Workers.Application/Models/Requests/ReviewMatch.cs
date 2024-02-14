@@ -1,6 +1,7 @@
 ﻿using Ardalis.Result;
 using FluentValidation;
 using MediatR;
+using Si.IdCheck.ApiClients.CloudCheck.Models.Responses;
 
 namespace Si.IdCheck.Workers.Application.Models.Requests;
 public class ReviewMatch : IRequest<Result>
@@ -10,6 +11,7 @@ public class ReviewMatch : IRequest<Result>
     public string MatchId { get; set; }
     public int? Peid { get; set; }
     public string PersonOfInterestBirthYear { get; set; }
+    public List<RiskType> RiskTypes { get; set; }
 }
 
 public class ReviewMatchValidator : AbstractValidator<ReviewMatch>
